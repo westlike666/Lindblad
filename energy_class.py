@@ -18,6 +18,9 @@ def sum_onsite(energies):
     return energies*2-np.sum(energies)
 
 
+def sum_Ising(U):
+    pass
+
 
 
 
