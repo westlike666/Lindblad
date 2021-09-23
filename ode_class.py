@@ -12,10 +12,13 @@ from scipy.integrate import solve_ivp
 #from qutip import*
 
 N=2 # max number excitation
-L=10 # number of site  
+L=10**3 # number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
+
+for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites 
+
 """ 
 
 J=0 #hopping 
@@ -28,7 +31,8 @@ gamma=2 #losse
 
 model=Bose_Hubbard(N,L)
 ind_a, ind_adag_a, ind_a_a = model.get_index()
-y0=model.get_init_value()
+#y0=model.get_init_value()
+y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
 
 def f(t,Y):
     D=0*Y+0j
