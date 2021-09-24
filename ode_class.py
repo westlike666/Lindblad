@@ -23,10 +23,10 @@ for two-level system, the maxmum site the computer can handle for cnstructing in
 for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites when using semi-classic
 
 """ 
-J=1 #hopping 
-w=3+2*J #detunning 
+J=0.1#hopping 
+w=4+2*J #detunning 
 U=0 # onsite repulsion 
-A=1 #external driving 
+A=0.1 #external driving 
 gamma=2#losse
 
 
@@ -68,7 +68,7 @@ def f(t,Y):
     return D   
 
 
-pick=0
+pick=2
 
 t_span=(0,10)
 t_eval=np.linspace(0, 10, 100)
