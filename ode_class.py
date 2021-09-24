@@ -15,7 +15,7 @@ from datetime import datetime
 from qutip import*
 
 N=2 # max number excitation
-L=2# number of site   
+L=4# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
@@ -23,18 +23,19 @@ for two-level system, the maxmum site the computer can handle for cnstructing in
 for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites when using semi-classic
 
 """ 
-J=0 #hopping 
+J=1 #hopping 
 w=3+2*J #detunning 
 U=0 # onsite repulsion 
-A=2 #external driving 
-gamma=2 #losse
+A=1 #external driving 
+gamma=2#losse
+
 
 """
-First using semi-classical approximation  
+First using semi-classical approximation. 
 """
 start_time=datetime.now()
 
-model=Bose_Hubbard(N,L)
+model=Bose_Hubbard(N,L,w,U,J,A,gamma)
 ind_a, ind_adag_a, ind_a_a = model.get_index()
 y0=model.get_init_value()
 #y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
@@ -71,7 +72,7 @@ pick=0
 
 t_span=(0,10)
 t_eval=np.linspace(0, 10, 100)
-result=solve_ivp(f, y0=y0, t_span=t_span, t_eval=t_eval, vectorized=True)
+result=solve_ivp(f, y0=y0, t_span=t_span, t_eval=t_eval, vectorized=False)
 
 end_time=datetime.now() 
 
@@ -99,6 +100,7 @@ print("--- Duration for Qutip with N={} levels and L={} sites is: {} ---\n" .for
 
 plt.plot(result2.times, result2.expect[pick]) 
 
+"""Let us think about the scales before comparing the two reuslts !!"""
 
 
                     
