@@ -13,19 +13,43 @@ import numpy as np
 from qutip import*
 from tqdm import tqdm
 
-J=0 #hopping 
-w=3+2*J #detunning 
-U=-1 # onsite repulsion 
-A=2 #external driving 
-gamma=2 #losses 
-
 
 class Bose_Hubbard():
     
-    def __init__(self, num_excitation, num_site):
+    def __init__(self, N=2, L=2, w=3, U=0, J=1, A=2, gamma=2): 
+        """
         
-        self.N=num_excitation
-        self.L=num_site
+
+        Parameters
+        ----------
+        N : TYPE, optional
+            number of maximum excitation of fock space. The default is 2.
+        L : TYPE, optional
+            number of sites. The default is 2.
+        w : TYPE, optional
+            detunning. The default is 3.
+        U : TYPE, optional
+            onsite repulsion. The default is 0.
+        J : TYPE, optional
+            hopping. The default is 1.
+        A : TYPE, optional
+            external driving. The default is 2.
+        gamma : TYPE, optional
+            losses. The default is 2.
+
+        Returns
+        -------
+        None.
+
+        """
+        
+        self.N=N
+        self.L=L
+        self.w=w
+        self.U=U
+        self.J=J
+        self.A=A
+        self.gamma=gamma
         
         
 
@@ -162,7 +186,8 @@ class Bose_Hubbard():
         H=Qobj()
         
         for i in tqdm(range(L)):       
-            H += w*adag[i]*a[i]+U/2*adag[i]**2*a[i]**2-J*(adag[(i+1)%L]*a[i]+adag[i]*a[(i+1)%L])+A*(adag[i]+a[i])        
+            H += self.w*adag[i]*a[i]+self.U/2*adag[i]**2*a[i]**2-self.J*(adag[(i+1)%L]*a[i]+adag[i]*a[(i+1)%L])+self.A*(adag[i]+a[i])        
+        self.Hamiltonian=H
         return H  
   
             
