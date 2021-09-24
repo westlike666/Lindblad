@@ -53,7 +53,7 @@ class Bose_Hubbard():
         
         
 
-    def generate_initial_density(self):
+    def generate_thermal_density(self):
         # N is the dimension of each fock states (number of max excitation)
         # L is the number of sites
         # rho is the total density matrix with dimension (N*L)^2        
@@ -62,11 +62,26 @@ class Bose_Hubbard():
         
         state_list=[]
         state=thermal_dm(N,1)
-        for i in tqdm(range(L)):
+        for i in (range(L)):
             state_list.append(state)     
         rho=tensor(state_list)  
-        self.rho=rho
-        return self.rho
+        
+        return rho
+    
+    
+    def generate_random_density(self):      
+        N=self.N
+        L=self.L
+        
+        state_list=[]
+        state=rand_dm(N,pure=True)
+        for i in (range(L)):
+            state_list.append(state)     
+        rho=tensor(state_list) 
+        
+        self.random_rho=rho
+        return self.random_rho
+
             
     
     
@@ -82,7 +97,7 @@ class Bose_Hubbard():
         adag_list=[]
             
         
-        for i in tqdm(range(L)):
+        for i in (range(L)):
             op_list=[]
             for m in range(L):
                 op_list.append(qeye(N))
@@ -106,7 +121,7 @@ class Bose_Hubbard():
         
         a_list, adag_list = self.generate_ladder_ops()
         
-        for i in tqdm(range(L)):
+        for i in (range(L)):
             if not flat:
                 ops_list.append([]) 
             for j in range(L):
@@ -127,7 +142,7 @@ class Bose_Hubbard():
         
         a_list, adag_list = self.generate_ladder_ops()
         
-        for i in tqdm(range(L)):
+        for i in (range(L)):
             if not flat:
                 ops_list.append([]) 
             for j in range(L):
@@ -140,11 +155,11 @@ class Bose_Hubbard():
         return self.a_a_list
     
     
-    def get_init_value(self): # get the expectation value of the L+L^2+L^2 opeartors 
+    def get_random_value(self): # get the expectation value of the L+L^2+L^2 opeartors 
         N=self.N
         L=self.L       
         
-        rho=self.generate_initial_density()
+        rho=self.random_rho
         
         a_list, _ = self.generate_ladder_ops()
         
@@ -165,7 +180,7 @@ class Bose_Hubbard():
         ind_adag_a=[]
         ind_a_a=[]
         
-        for i in tqdm(range(L)):
+        for i in (range(L)):
             
             ind_a.append(i)
             ind_adag_a.append([])
@@ -185,8 +200,8 @@ class Bose_Hubbard():
         a, adag=self.generate_ladder_ops()  
         H=Qobj()
         
-        for i in tqdm(range(L)):       
-            H += self.w*adag[i]*a[i]+self.U/2*adag[i]**2*a[i]**2-self.J*(adag[(i+1)%L]*a[i]+adag[i]*a[(i+1)%L])+self.A*(adag[i]+a[i])        
+        for i in (range(L)):       
+            H += self.w*adag[i]*a[i]+self.U/2*adag[i]*adag[i]*a[i]*a[i]-self.J*(adag[(i+1)%L]*a[i]+adag[i]*a[(i+1)%L])+self.A*(adag[i]+a[i])        
         self.Hamiltonian=H
         return H  
   
