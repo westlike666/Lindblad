@@ -9,13 +9,13 @@ import numpy as np
 from Bose_Hubbard_class import Bose_Hubbard
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-#import time 
+import time 
 from datetime import datetime 
-
+from tqdm import tqdm
 from qutip import*
 
 N=2# max number excitation
-L=5# number of site   
+L=1# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
@@ -42,7 +42,26 @@ rho0=model.generate_random_density() # generate a random initial density every t
 y0=model.get_random_value()
 #y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
 
-def f(t,Y): # This is a colsed set of coupled rate equations setting U=0:  equaiton 3 in PLA 91, 033823(2015)
+def f(t,Y, pbar, state):  
+    # This is to form a colsed set of coupled rate equations setting U=0:  equaiton 3 in PLA 91, 033823(2015)
+    # also adding a progress bar:https://stackoverflow.com/questions/59047892/how-to-monitor-the-process-of-scipy-odeint 
+    # state is a list containing last updated time t:
+    # state = [last_t, dt]
+    # calls throughout the ODE integration
+    
+    
+    # let's subdivide t_span into 1000 parts
+    # call update(n) here where n = (t - last_t) / dt
+    #time.sleep(0) 
+    
+    last_t, dt = state
+    n = int((t - last_t)/dt)
+    pbar.update(n)
+    
+    # we need this to take into account that n is a rounded number.
+    state[0] = last_t + dt * n
+    
+    # YOUR CODE HERE 
     D=0*Y+0j
     
     for l in range(L):
@@ -74,17 +93,21 @@ def f(t,Y): # This is a colsed set of coupled rate equations setting U=0:  equai
 t_0=0
 t_1=10
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 100)
+t_eval=np.linspace(t_0, t_1, 1000) 
 
 
-
-result1=solve_ivp(f, y0=y0, t_span=t_span, t_eval=t_eval)
+with tqdm(total=100) as pbar:
+    result1=solve_ivp(f, y0=y0, t_span=t_span, t_eval=t_eval,
+                      args=[pbar,[t_0, (t_1-t_0)/100]])
 
 end_time=datetime.now() 
 
 print("--- Duration for semiclassical with N={} levels and L={} sites is: {} ---\n" .format(N,L, end_time-start_time))
 
 plt.plot(result1.t, result1.y[pick], label='Semiclassical approx')  
+
+
+
 """
 Second using Qutip solver with full Lindblad equations 
 """
@@ -113,8 +136,6 @@ plt.ylabel('$<a_{%d}>$' % pick)
 plt.legend()
 
 
-
-"""Let us think about the scales before comparing the two reuslts !!"""
 
 
                     
