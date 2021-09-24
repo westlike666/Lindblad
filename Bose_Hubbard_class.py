@@ -11,6 +11,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 #import scipy
 from qutip import*
+from tqdm import tqdm
 
 J=0 #hopping 
 w=3+2*J #detunning 
@@ -37,7 +38,7 @@ class Bose_Hubbard():
         
         state_list=[]
         state=thermal_dm(N,1)
-        for i in range(L):
+        for i in tqdm(range(L)):
             state_list.append(state)     
         rho=tensor(state_list)  
         self.rho=rho
@@ -57,7 +58,7 @@ class Bose_Hubbard():
         adag_list=[]
             
         
-        for i in range(L):
+        for i in tqdm(range(L)):
             op_list=[]
             for m in range(L):
                 op_list.append(qeye(N))
@@ -81,7 +82,7 @@ class Bose_Hubbard():
         
         a_list, adag_list = self.generate_ladder_ops()
         
-        for i in range(L):
+        for i in tqdm(range(L)):
             if not flat:
                 ops_list.append([]) 
             for j in range(L):
@@ -102,7 +103,7 @@ class Bose_Hubbard():
         
         a_list, adag_list = self.generate_ladder_ops()
         
-        for i in range(L):
+        for i in tqdm(range(L)):
             if not flat:
                 ops_list.append([]) 
             for j in range(L):
@@ -140,7 +141,7 @@ class Bose_Hubbard():
         ind_adag_a=[]
         ind_a_a=[]
         
-        for i in range(L):
+        for i in tqdm(range(L)):
             
             ind_a.append(i)
             ind_adag_a.append([])
@@ -151,6 +152,22 @@ class Bose_Hubbard():
                 ind_a_a[i].append(L+L*L+i*L+j)
                 
         return ind_a, ind_adag_a, ind_a_a  
+    
+    
+    def get_Hamiltonian(self):
+        N=self.N
+        L=self.L
+        
+        a, adag=self.generate_ladder_ops()  
+        H=Qobj()
+        
+        for i in tqdm(range(L)):       
+            H += w*adag[i]*a[i]+U/2*adag[i]**2*a[i]**2-J*(adag[(i+1)%L]*a[i]+adag[i]*a[(i+1)%L])+A*(adag[i]+a[i])        
+        return H  
+  
+            
+            
+            
     
     
     
