@@ -9,30 +9,35 @@ import numpy as np
 from Bose_Hubbard_class import Bose_Hubbard
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
-#from qutip import*
+#import time 
+from datetime import datetime 
+
+from qutip import*
 
 N=2 # max number excitation
-L=10**3 # number of site   
+L=2# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
 
-for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites 
+for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites when using semi-classic
 
 """ 
-
 J=0 #hopping 
 w=3+2*J #detunning 
 U=0 # onsite repulsion 
 A=2 #external driving 
 gamma=2 #losse
 
-
+"""
+First using semi-classical approximation  
+"""
+start_time=datetime.now()
 
 model=Bose_Hubbard(N,L)
 ind_a, ind_adag_a, ind_a_a = model.get_index()
-#y0=model.get_init_value()
-y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
+y0=model.get_init_value()
+#y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
 
 def f(t,Y):
     D=0*Y+0j
@@ -62,11 +67,40 @@ def f(t,Y):
     return D   
 
 
+pick=0
 
 t_span=(0,10)
-#t_eval=np.linspace(0, 10, 100)
-result=solve_ivp(f, y0=y0, t_span=t_span) 
-plt.plot(result.t, result.y[0])     
+t_eval=np.linspace(0, 10, 100)
+result=solve_ivp(f, y0=y0, t_span=t_span, t_eval=t_eval, vectorized=True)
+
+end_time=datetime.now() 
+
+print("--- Duration for semiclassical with N={} levels and L={} sites is: {} ---\n" .format(N,L, end_time-start_time))
+
+plt.plot(result.t, result.y[pick])  
+
+"""
+Second using Qutip solver with full Lindblad equations 
+"""
+start_time=datetime.now()
+
+H=model.get_Hamiltonian()
+rho0=model.generate_initial_density() 
+a_list, adag_list =model.generate_ladder_ops() #which is annihilation operators 
+c_ops=[]
+for i in range (L):
+    c_ops.append(np.sqrt(gamma)*a_list[i])
+    
+times=t_eval
+
+result2=mesolve(H, rho0, times, c_ops, e_ops=a_list)
+end_time=datetime.now()
+print("--- Duration for Qutip with N={} levels and L={} sites is: {} ---\n" .format(N,L, end_time-start_time))
+
+plt.plot(result2.times, result2.expect[pick]) 
+
+
+
                     
             
                 
