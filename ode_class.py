@@ -14,8 +14,8 @@ from datetime import datetime
 from tqdm import tqdm
 from qutip import*
 
-N=2# max number excitation
-L=1# number of site   
+N=3# max number excitation
+L=2# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
@@ -25,7 +25,7 @@ for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites when usi
 """ 
 J=1#hopping 
 w=4+2*J #detunning 
-U=-10 # onsite repulsion 
+U=0# onsite repulsion 
 A=1 #external driving 
 gamma=1#losse
 
