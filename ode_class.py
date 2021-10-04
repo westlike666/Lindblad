@@ -15,7 +15,7 @@ from tqdm import tqdm
 from qutip import*
 
 N=3# max number excitation
-L=2# number of site   
+L=5# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
@@ -42,7 +42,8 @@ rho0=model.generate_random_density() # generate a random initial density every t
 y0=model.get_random_value()
 #y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
 
-def f(t,Y, pbar, state):  
+def f(t,Y, pbar, state): 
+    """
     # This is to form a colsed set of coupled rate equations setting U=0:  equaiton 3 in PLA 91, 033823(2015)
     # also adding a progress bar:https://stackoverflow.com/questions/59047892/how-to-monitor-the-process-of-scipy-odeint 
     # state is a list containing last updated time t:
@@ -53,6 +54,7 @@ def f(t,Y, pbar, state):
     # let's subdivide t_span into 1000 parts
     # call update(n) here where n = (t - last_t) / dt
     #time.sleep(0) 
+    """
     
     last_t, dt = state
     n = int((t - last_t)/dt)
