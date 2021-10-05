@@ -17,7 +17,7 @@ from qutip import*
 import random
 
 L=2
-N=3
+N=2
 
 show_type='z'
 show_ind=random.randrange(N)
@@ -30,8 +30,8 @@ rho0=model.generate_random_density()
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-
-gamma=model.generate_gamma(3) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+G=1
+gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
 """
 sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2>
@@ -52,7 +52,7 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=1
+t_1=20
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 10000) 
 
@@ -91,7 +91,7 @@ plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='numer
 
 
 
-plt.title('XY model L=%d, N=%d ' % (L,N))
+plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
 plt.xlabel('t')
 plt.ylabel("$<S^{}_{}>$".format(show_type, show_ind))
 plt.legend()  
