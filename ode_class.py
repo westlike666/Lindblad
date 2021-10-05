@@ -15,7 +15,7 @@ from tqdm import tqdm
 from qutip import*
 
 N=3# max number excitation
-L=5# number of site   
+L=2# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
