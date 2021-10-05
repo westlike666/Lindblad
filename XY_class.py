@@ -14,7 +14,7 @@ import numpy as np
 #import scipy
 from qutip import*
 from tqdm import tqdm
-
+import copy 
 
 
 
@@ -121,7 +121,7 @@ class XY():
         return Sm   
 
         
-    def get_Hamiltonian(self):
+    def get_Hamiltonian(self, W=1, t=1, u=0):
          L=self.L
          N=self.N
          
@@ -130,9 +130,9 @@ class XY():
          Sp=self.generate_Sp()
          Sm=self.generate_Sm()
          
-         eps=Energycomputer(N).uniformrandom_e(1)
-         J=Jcomputer(N).constant_j(1)
-         U=Ucomputer(N).constant_u(0)
+         eps=Energycomputer(N).uniformrandom_e(W)
+         J=Jcomputer(N).constant_j(t)
+         U=Ucomputer(N).constant_u(u)
          
          self.eps=eps
          self.J=J
@@ -143,7 +143,14 @@ class XY():
              for j in range(N):
                  H = H + J[i,j]*(Sp[i]*Sm[j]+Sp[j]*Sm[i])+ U[i,j]*Sz[i]*Sz[j]
          self.Halmitonian=H        
-         return H        
+         return H  
+     
+    def generate_gamma(self, G=1):   
+        self.gamma=Gammacomputer(self.N).constant_g(G)    
+        return self.gamma
+        
+
+
          
          
         
@@ -176,6 +183,24 @@ class Energycomputer():
         """
         energies = self.rng.uniform(-W/2, W/2, self.N)
         return energies
+    
+
+class Gammacomputer():
+    def __init__(self, N):
+        """
+        generate a list of dissipation rate gamma 
+        """
+        self.N=N 
+        self.rng=np.random.default_rng() #random number generator
+        
+    def constant_g(self, g=1):
+        gamma=g*np.ones(self.N)
+        return gamma  
+    
+    def uniformrandom_g(self, G=1):
+        gamma=self.rng.uniform(-G/2, G/2, self.N)
+        return gamma
+    
     
     
     
@@ -292,7 +317,7 @@ class Ucomputer():
           
 class ode_funs():
     
-    def __init__(self, N, eps, J, U, Diss='S_z'):
+    def __init__(self, N, eps, J, U, gamma, Diss='depha'):
         """
         Parameters
         ----------
@@ -300,8 +325,8 @@ class ode_funs():
         eps: list of onsite energies
         J: matrix of flip-flop term J
         U: matrix of Ising term
-        Diss : str, optional
-            Choose the type of dissipator. S_z for dephasing and S_m for disspipation. The default is 'S_z'.
+        index: Dictionary 
+            Choose the type of dissipator. S_z for dephasing and S_m for disspipation. The default is 'deph'.
 
         Returns
         -------
@@ -311,31 +336,92 @@ class ode_funs():
         self.eps=eps
         self.J=J
         self.U=U
+        self.gamma=gamma
         self.Diss=Diss
         
     def test(self,t,Y):
         D=self.eps*Y
         return D
     
-    def fun_1st(self,t,Y):
+    def fun_1st(self,t,Y, index):
         """
         Parameters
         ----------
         t : TYPE
             DESCRIPTION.
-        Y : shape of (2,N) for Sz list and Sp list respectively 
+        Y : shape of (N,) for Sz list and Sp  
 
         Returns
         -------
-        D: shape of (2,N) Derivative of Sz and Sp
+        D: shape of (N,) Derivative of Sz and Sp
         """
         
         D=0*Y+0j
         
-    def flat_index(self):
-        N=self.N
+        for l in range(self.N):
+            f1=0
+            f2=-1j*self.eps[l]*Y[index['+'][l]]
+            for i in range(self.N):
+               f1 += 2j*self.J[i,l]*(Y[index['+'][i]]*Y[index['+'][l]].conjugate()\
+                   -Y[index['+'][l]]*Y[index['+'][i]].conjugate())
+               f2 += -4j*self.J[i,l]*Y[index['+'][i]]*Y[index['z'][l]]\
+                   -2j*self.U[i,l]*Y[index['+'][l]]*Y[index['z'][i]]    
+                   
+            if self.Diss=='dephasing':
+                g1=0
+                
+                g2=-1/2*self.gamma[l]*Y[index['+'][l]]
+                
+            elif self.Diss=='dissipation':
+                g1=-self.gamma[l]*Y[index['+'][l]]*Y[index['+'][l]].conjugate()
+                g2=self.gamma[l]*Y[index['+'][l]]*Y[index['z'][l]]
+                
+            else:
+                print('Jump operator is not difined')
+            
+            D[index['z'][l]] = f1+g1
+            D[index['+'][l]] = f2+g2
+            
+        return D    
+            
+              
+    
+    def flat_index(self, single_ops, double_ops, index):
+        """        
+        Parameters
+        ----------
+        single_ops : list of str e.g. ['z', '+']
         
-        #use hash table for a input  ['sz','sp'] ['s1s2', 's2s3', ...]
+        double_ops : list of str. e.g.  ['z+', '+-', ...]
+
+        index : dictionary 
+            DESCRIPTION. Initiate it to empty {}.
+
+        Returns
+        -------
+        index : a dictionary contain the index in the flatten vector Y 
+
+        """
+        N=self.N       
+
+        pre=0
+        while single_ops:
+            key=single_ops.pop(0)
+            value=np.arange(pre, pre+N)
+            pre += N
+            index[key]=value
+            
+        while double_ops:
+            key=double_ops.pop(0)
+            print(pre)
+            value=np.array([range(N*i+pre, N*(i+1)+pre)  for i in range(N)])
+            pre += N**2
+            index[key]=value
+                  
+        return index   
+        
+            
+            
         
         
         
