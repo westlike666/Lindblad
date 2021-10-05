@@ -205,7 +205,7 @@ class Gammacomputer():
     
  
 class Jcomputer():
-      def __init__(self, N, nn_only=False, scaled=False):
+      def __init__(self, N, nn_only=False, scaled=True):
           """
           ----------
           N : int. numbwer of sites .
