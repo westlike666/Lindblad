@@ -17,11 +17,10 @@ from qutip import*
 import random
 
 L=2
-<<<<<<< HEAD
+
 N=2
-=======
 N=5
->>>>>>> 7d7e60a4dc1ba2b750f09a81dd69d2e8712efed4
+
 
 show_type='+'
 show_ind=random.randrange(N)
@@ -34,13 +33,9 @@ rho0=model.generate_coherent_density()
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-<<<<<<< HEAD
-G=1
+G=0
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
-=======
 
-gamma=model.generate_gamma(1) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
->>>>>>> 7d7e60a4dc1ba2b750f09a81dd69d2e8712efed4
 
 """
 sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2>
