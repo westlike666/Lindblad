@@ -17,21 +17,30 @@ from qutip import*
 import random
 
 L=2
+<<<<<<< HEAD
 N=2
+=======
+N=5
+>>>>>>> 7d7e60a4dc1ba2b750f09a81dd69d2e8712efed4
 
-show_type='z'
+show_type='+'
 show_ind=random.randrange(N)
 
 model=XY(L,N)
 
 H=model.get_Hamiltonian(W=1, t=0.1, u=0)
-rho0=model.generate_random_density()
+rho0=model.generate_coherent_density()
 
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
+<<<<<<< HEAD
 G=1
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+=======
+
+gamma=model.generate_gamma(1) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+>>>>>>> 7d7e60a4dc1ba2b750f09a81dd69d2e8712efed4
 
 """
 sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2>
@@ -42,8 +51,8 @@ U=model.U
 
 y0=expect(model.Sz+model.Sp, rho0)
    
-Diss='dephasing' 
-#Diss='dissipation'
+#Diss='dephasing' 
+Diss='dissipation'
 
 ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
 
@@ -54,10 +63,10 @@ index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={})
 t_0=0
 t_1=20
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 10000) 
+t_eval=np.linspace(t_0, t_1, 1000) 
 
 
-result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index])  
+result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index], method='BDF')  
 
 plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
 
@@ -79,15 +88,18 @@ e_ops=Sz+Sp # list of expectation values to evaluate
 c_ops=[]
 
 for i in range(N):
-    c_ops.append(np.square(gamma[i])*diss[i])
+    c_ops.append(np.sqrt(gamma[i])*diss[i])
 
 
 t_span=(t_0,t_1)
 times=t_eval
-    
-result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True) 
 
-plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='numerical solved Lindblad') 
+ops=Options()
+ops.method='bdf'
+    
+result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=ops) 
+
+plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad') 
 
 
 
