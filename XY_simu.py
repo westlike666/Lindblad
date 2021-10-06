@@ -17,7 +17,7 @@ from qutip import*
 import random
 
 L=2
-N=8
+N=5
 
 show_type='+'
 show_ind=random.randrange(N)
@@ -31,7 +31,7 @@ Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
 
-gamma=model.generate_gamma(0.1) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+gamma=model.generate_gamma(1) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
 """
 sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2>
@@ -57,7 +57,7 @@ t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000) 
 
 
-result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index])  
+result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index], method='BDF')  
 
 plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
 
@@ -84,10 +84,13 @@ for i in range(N):
 
 t_span=(t_0,t_1)
 times=t_eval
-    
-result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True) 
 
-plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='numerical solved Lindblad') 
+ops=Options()
+ops.method='bdf'
+    
+result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=ops) 
+
+plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad') 
 
 
 
