@@ -17,7 +17,7 @@ from qutip import*
 import random
 
 L=2
-N=3
+N=5
 
 show_type='z'
 show_ind=random.randrange(N)
@@ -31,7 +31,7 @@ Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
 
-gamma=model.generate_gamma(3) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+gamma=model.generate_gamma(0.1) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
 """
 sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2>
@@ -42,8 +42,8 @@ U=model.U
 
 y0=expect(model.Sz+model.Sp, rho0)
    
-Diss='dephasing' 
-#Diss='dissipation'
+#Diss='dephasing' 
+Diss='dissipation'
 
 ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
 
@@ -52,7 +52,7 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=1
+t_1=100
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 10000) 
 
@@ -79,7 +79,7 @@ e_ops=Sz+Sp # list of expectation values to evaluate
 c_ops=[]
 
 for i in range(N):
-    c_ops.append(np.square(gamma[i])*diss[i])
+    c_ops.append(np.sqrt(gamma[i])*diss[i])
 
 
 t_span=(t_0,t_1)
