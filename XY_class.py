@@ -45,7 +45,23 @@ class XY():
         rho=tensor(state_list) 
         
         self.random_rho=rho
-        return self.random_rho   
+        return self.random_rho
+    
+    def generate_coherent_density(self,pure=True):   
+        
+        L=self.L # number of levels 
+        N=self.N # number of sites 
+
+        
+        state_list=[]
+        state=coherent(L,np.pi/4)
+        
+        for i in (range(N)):
+            state_list.append(state)     
+        rho=tensor(state_list) 
+        
+        self.coherent_rho=rho
+        return self.coherent_rho       
     
     def generate_Sz(self): 
         """
@@ -130,7 +146,7 @@ class XY():
          Sp=self.generate_Sp()
          Sm=self.generate_Sm()
          
-         eps=Energycomputer(N).uniformrandom_e(W)
+         eps=Energycomputer(N).constant_e(W)
          J=Jcomputer(N).constant_j(t)
          U=Ucomputer(N).constant_u(u)
          
@@ -263,7 +279,7 @@ class Ucomputer():
     
     
 
-      def __init__(self, N, nn_only=True, scaled=True):
+      def __init__(self, N, nn_only=False, scaled=True):
           """
           ----------
           N : int. numbwer of sites .
