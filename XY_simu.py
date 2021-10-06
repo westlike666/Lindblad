@@ -17,15 +17,15 @@ from qutip import*
 import random
 
 L=2
-N=5
+N=8
 
-show_type='z'
+show_type='+'
 show_ind=random.randrange(N)
 
 model=XY(L,N)
 
 H=model.get_Hamiltonian(W=1, t=0.1, u=0)
-rho0=model.generate_random_density()
+rho0=model.generate_coherent_density()
 
 Sz=model.Sz
 Sp=model.Sp
@@ -52,9 +52,9 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=100
+t_1=20
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 10000) 
+t_eval=np.linspace(t_0, t_1, 1000) 
 
 
 result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index])  
