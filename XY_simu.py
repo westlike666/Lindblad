@@ -17,13 +17,12 @@ from qutip import*
 import random
 
 L=2
-
-N=2
-N=5
+N=3
 
 
 show_type='+'
-show_ind=random.randrange(N)
+#show_ind=random.randrange(N)
+show_ind=0
 
 model=XY(L,N)
 
@@ -33,7 +32,7 @@ rho0=model.generate_coherent_density()
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-G=0
+G=0.1
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
 
@@ -58,10 +57,10 @@ index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={})
 t_0=0
 t_1=20
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 1000) 
+t_eval=np.linspace(t_0, t_1, 1000 )
 
 
-result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index], method='BDF')  
+result1=solve_ivp(fun, t_span=t_span, y0=y0, t_eval=t_eval, args=[index])  
 
 plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
 
@@ -89,10 +88,10 @@ for i in range(N):
 t_span=(t_0,t_1)
 times=t_eval
 
-ops=Options()
-ops.method='bdf'
+ops=Options(tidy=(False), average_expect=(False))
+
     
-result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=ops) 
+result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None) 
 
 plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad') 
 
