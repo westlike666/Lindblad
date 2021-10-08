@@ -31,14 +31,16 @@ class XY():
         self.L=L
         self.N=N
         self.s=(L-1)/2
-    def generate_random_density(self,pure=True):   
+    def generate_random_density(self,pure=True,seed=None):   
         
         L=self.L # number of levels 
         N=self.N # number of sites 
 
         
         state_list=[]
+        np.random.seed(seed)
         state=rand_dm(L,pure=pure)
+        print(state)
         
         for i in (range(N)):
             state_list.append(state)     
