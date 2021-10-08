@@ -15,9 +15,12 @@ from datetime import datetime
 from tqdm import tqdm
 from qutip import*
 import random
+from Lindblad_solver import Lindblad_solve
+
+
 
 L=2
-N=3
+N=6
 
 
 show_type='+'
@@ -27,12 +30,15 @@ show_ind=0
 model=XY(L,N)
 
 H=model.get_Hamiltonian(W=1, t=0.1, u=0)
-rho0=model.generate_coherent_density()
-
+#rho0=model.generate_coherent_density()
+rho0=model.generate_random_density(seed=2)
+#print(rho0)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-G=0.1
+#G=0.0000000000000001
+G=1
+
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
 
@@ -96,11 +102,18 @@ result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None)
 plt.plot(result2.times, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad') 
 
 
+result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops=e_ops)  
+
+plt.plot(result3.t, expect_value[index[show_type][show_ind]], label='solve_ivp solved Lindblad') 
+
+
 
 plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
 plt.xlabel('t')
 plt.ylabel("$<S^{}_{}>$".format(show_type, show_ind))
 plt.legend()  
+
+
 
 
 
