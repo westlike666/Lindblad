@@ -17,7 +17,7 @@ from qutip import*
 
 
 L=2
-N=5
+N=6
 
 model=XY(L,N)
 
