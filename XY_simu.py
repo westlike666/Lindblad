@@ -20,10 +20,10 @@ from Lindblad_solver import Lindblad_solve
 
 
 L=2
-N=6
+N=4
 
 
-show_type='+'
+show_type='z'
 #show_ind=random.randrange(N)
 show_ind=0
 
@@ -31,13 +31,13 @@ model=XY(L,N)
 
 H=model.get_Hamiltonian(W=1, t=0.1, u=0)
 #rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=2)
+rho0=model.generate_random_density(seed=1)
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
 #G=0.0000000000000001
-G=1
+G=0.1
 
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
