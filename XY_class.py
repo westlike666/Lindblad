@@ -40,7 +40,7 @@ class XY():
         state_list=[]
         np.random.seed(seed)
         state=rand_dm(L,pure=pure)
-        print(state)
+        #print(state)
         
         for i in (range(N)):
             state_list.append(state)     
@@ -137,6 +137,26 @@ class XY():
             Sm.append(tensor(op_list))
         self.Sm=Sm
         return Sm   
+    
+    def generate_SpSm(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sp=self.generate_Sp()
+        Sm=self.generate_Sm()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sp[i]*Sm[j] # the [i,j] element is Sp_i*Sm_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SpSm=ops_list
+        return self.SpSm        
 
         
     def get_Hamiltonian(self, W=1, t=1, u=0):
