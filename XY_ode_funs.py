@@ -81,6 +81,184 @@ class ode_funs():
             D[index['+'][l]] = f2+g2
             
         return D    
+    
+    def fun_2nd(self, t, Y, index):
+        """
+        return derivative of <Sz> and <SpSm> by breaking <SpSmSz=<SpSm><Sz>
+        """
+        
+        D=0*Y+0j
+        
+        for l in range(self.N):
+            f1=0
+            #f2=1j*self.eps[l]*Y[index['+'][l]]
+            for i in range(self.N):
+                f1 += 2j*self.J[i,l]*(Y[index['+-'][i,l]]-Y[index['+-'][l,i]])
+                                         
+                #f2 += -4j*self.J[i,l]*Y[index['+'][i]]*Y[index['z'][l]]\
+                #       -2j*self.U[i,l]*Y[index['+'][l]]*Y[index['z'][i]] 
+                if self.Diss=='dephasing':
+                    g1=0                   
+                    #g2=-1/2*self.gamma[l]*Y[index['+'][l]]                  
+                    
+                elif self.Diss=='dissipation':
+                    g1=-self.gamma[l]*Y[index['+-'][l,l]]
+                    #g2=self.gamma[l]*Y[index['+'][l]]*Y[index['z'][l]]   
+                else:
+                    print('Jump operator is not difined')                      
+            D[index['z'][l]] = f1+g1
+            #D[index['+'][l]] = f2+g2              
+            
+            for m in range(self.N):
+                f3=1j*(self.eps[l]-self.eps[m])*Y[index['+-'][l,m]] 
+                
+                for i in range(self.N):
+                    f3 += -4j*(self.J[l,i]*Y[index['+-'][i,m]]*Y[index['z'][l]]\
+                              -self.J[m,i]*Y[index['+-'][l,i]]*Y[index['z'][m]]\
+                              -(l==m)*self.J[l,i]*Y[index['+-'][i,l]])\
+                       +2j*((self.U[m,i]-self.U[l,i])*Y[index['+-'][l,m]]*Y[index['z'][i]]\
+                            +self.U[m,l]*Y[index['+-'][l,m]])                  
+                if self.Diss=='dephasing':             
+                    g3=1/2*(self.gamma[l]+self.gamma[m])*((m==l)-1)*Y[index['+-'][l,m]]
+                    
+                elif self.Diss=='dissipation':
+                    g3=self.gamma[l]*Y[index['+-'][l,m]]*Y[index['z'][l]]\
+                        +self.gamma[m]*Y[index['+-'][l,m]]*Y[index['z'][m]]\
+                        -self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]]    
+                else:
+                    print('Jump operator is not difined')
+                
+                D[index['+-'][l,m]]=f3+g3
+        return D   
+
+
+    def fun_2nd_all(self, t, Y, index):
+        """
+        return derivative of <Sz> , <Sp>,  <SpSm>, <SpSp>, <SpSz>, <SmSz>, <SzSz>
+         by 2nd order approximation:
+             <abc>=<ab><c>+<ac><b>+<bc><a>-2<a><b><c>  
+             
+        The index thus contain 'z', '+', '-' '+-', '++','--' '+z', '-z', 'zz'     
+    
+        """
+        
+        D=0*Y+0j
+        
+        for l in range(self.N):
+            f1=0   #for Sz
+            f2=1j*self.eps[l]*Y[index['+'][l]]  # for Sp
+            
+            for i in range(self.N):
+                f1 += 2j*self.J[i,l]*(Y[index['+-'][i,l]]-Y[index['+-'][l,i]])
+                                         
+                f2 += -4j*self.J[i,l]*Y[index['+z'][i,l]]\
+                       -2j*self.U[i,l]*Y[index['+z'][l,i]] 
+                
+                if self.Diss=='dephasing':
+                    g1=0                   
+                    g2=-1/2*self.gamma[l]*Y[index['+'][l]]                  
+                    
+                elif self.Diss=='dissipation':
+                    g1=-self.gamma[l]*Y[index['+-'][l,l]]
+                    g2=self.gamma[l]*Y[index['+z'][l,l]]   
+                else:
+                    print('Jump operator is not difined')                      
+            D[index['z'][l]] = f1+g1
+            D[index['+'][l]] = f2+g2
+            D[index['-'][l]] = (f2+g2).conjugate()
+            
+            for m in range(self.N):
+                f3=1j*(self.eps[l]-self.eps[m])*Y[index['+-'][l,m]]  # for SpSm
+                
+                f4=1j*(self.eps[l]+self.eps[m])*Y[index['++'][l,m]]  # for SpSp
+                
+                f5=1j*self.eps[l]*Y[index['+z'][l,m]] # for SpSz
+                
+                f6=-1j*self.eps[l]*Y[index['-z'][l,m]] # for SmSz
+                
+                f7=0 # for SzSz
+                
+                for i in range(self.N):
+                    f3 += -4j*(self.J[l,i]*self.SSS('+-z',[i,m,l],Y,index)\
+                              -self.J[m,i]*self.SSS('+-z',[l,i,m],Y,index)\
+                              -(l==m)*self.J[l,i]*Y[index['+-'][i,l]])\
+                       +2j*((self.U[m,i]-self.U[l,i])*self.SSS('+-z',[l,m,i],Y,index)\
+                            +self.U[m,l]*Y[index['+-'][l,m]])  
+                    
+                    f4 += -4j*(self.J[l,i]*self.SSS('++z',[i,m,l],Y,index)\
+                              +self.J[m,i]*self.SSS('++z',[l,i,m],Y,index)\
+                              +(l==m)*self.J[l,i]*Y[index['++'][i,l]])\
+                       -2j*((self.U[m,i]+self.U[l,i])*self.SSS('++z',[l,m,i],Y,index)\
+                            +self.U[m,l]*Y[index['++'][l,m]])
+                           
+                    f5 += -2j*self.J[m,i]*(self.SSS('++-',[l,m,i],Y,index)\
+                                           -self.SSS('++-',[i,l,m],Y,index))\
+                        -4j*self.J[l,i]*self.SSS('+zz',[i,l,m],Y,index)\
+                            -2j*self.U[i,l]*self.SSS('+zz',[l,m,i],Y,index)
+
+                    f6 += -2j*self.J[m,i]*(self.SSS('+--',[m,l,i],Y,index)\
+                                           -self.SSS('+--',[i,l,m],Y,index))\
+                        +4j*(self.J[l,i]*self.SSS('-zz',[i,l,m],Y,index)
+                             -self.J[m,l]*Y[index['-z'][m,l]])\
+                        +4j*(m==l)*self.J[i,l]*Y[index['-z'][i,l]]\
+                        +2j*self.U[i,l]*self.SSS('-zz',[l,m,i],Y,index)
+                                
+                     
+                    f7 += -2j*self.J[m,i]*(self.SSS('+-z',[m,i,l],Y,index)\
+                                           -self.SSS('+-z',[i,m,l],Y,index))\
+                          -2j*self.J[l,i]*(self.SSS('+-z',[l,i,m],Y,index)\
+                                           -self.SSS('+-z',[i,l,m],Y,index))\
+                          -2j*(m==l)*self.J[l,i]*(Y[index['+-'][l,i]]+Y[index['+-'][i,l]])\
+                          +2j*self.J[m,l]*(Y[index['+-'][m,l]]+Y[index['+-'][l,m]])    
+                            
+                        
+                           
+                if self.Diss=='dephasing':             
+                    g3=1/2*(self.gamma[l]+self.gamma[m])*((m==l)-1)*Y[index['+-'][l,m]]
+                    
+                    g4=-1/2*(self.gamma[l]+self.gamma[m])*((m==l)+1)*Y[index['++'][l,m]]
+                    
+                    g5=-1/2*self.gamma[l]*Y[index['+z'][l,m]]
+                    
+                    g6=-1/2*self.gamma[l]*Y[index['-z'][l,m]]
+                    
+                    g7=0
+                    
+                elif self.Diss=='dissipation':
+                    g3=self.gamma[l]*self.SSS('+-z',[l,m,l],Y,index)\
+                        +self.gamma[m]*self.SSS('+-z',[l,m,m],Y,index)\
+                        -self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
+                    
+                    g4=self.gamma[l]*self.SSS('++z',[l,m,l],Y,index)\
+                        +self.gamma[m]*self.SSS('++z',[l,m,m],Y,index)\
+                        +self.gamma[m]*((l==m))*Y[index['++'][l,m]]
+                    
+                    g5=self.gamma[l]*self.SSS('+zz',[l,l,m],Y,index)\
+                        -self.gamma[m]*self.SSS('++-',[l,m,m],Y,index)
+                        
+                    g6=self.gamma[l]*(self.SSS('-zz',[l,l,m],Y,index)-Y[index['-z'][l,m]])\
+                        -self.gamma[m]*self.SSS('+--',[m,l,m],Y,index)
+                    
+                    g7=-self.gamma[l]*self.SSS('+-z',[l,l,m],Y,index)\
+                        -self.gamma[m]*self.SSS('+-z',[m,m,l],Y,index)\
+                        +self.gamma[l]*((l==m))*Y[index['+-'][l,l]]
+                        
+                        
+                else:
+                    print('Jump operator is not difined')
+                    
+                    
+                D[index['+-'][l,m]]=f3+g3
+                D[index['++'][l,m]]=f4+g4
+                D[index['--'][l,m]]=np.conjugate(D[index['++'][l,m]])
+                D[index['+z'][l,m]]=f5+g5
+                D[index['-z'][l,m]]=f6+g6
+                D[index['zz'][l,m]]=f7+g7
+                          
+        return D    
+            
+             
+            
             
               
     
@@ -111,9 +289,38 @@ class ode_funs():
             
         while double_ops:
             key=double_ops.pop(0)
-            print(pre)
+            #print(pre)
             value=np.array([range(N*i+pre, N*(i+1)+pre)  for i in range(N)])
             pre += N**2
             index[key]=value
+            self.index=index
                   
         return index   
+    
+    
+    def SS(self, pmz, lm, Y, index): 
+        """
+        length 2
+        
+        e.g. pmz='zz', lm=(0,0) and       
+        return S_zS_z[0,0] 
+        """
+        return Y[index[pmz][lm]]
+    
+    def SSS(self, pmz, lm, Y, index):
+        
+        """
+        length 3
+        2nd order approximation:
+             <abc>=<ab><c>+<ac><b>+<bc><a>-2<a><b><c>
+        
+         e.g. pmz='zzz', lm=(0,0,0) and       
+        return S_zS_zS_z[0,0,0] 
+        """
+        return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
+                +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
+                +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
+                -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+            
+    
+    
