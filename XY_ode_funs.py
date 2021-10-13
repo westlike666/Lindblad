@@ -41,7 +41,7 @@ class ode_funs():
         D=self.eps*Y
         return D
     
-    def fun_1st(self,t,Y, index):
+    def fun_1st(self,t,Y, index, pbar, state):
         """
         Parameters
         ----------
@@ -53,6 +53,12 @@ class ode_funs():
         -------
         D: shape of (N,) Derivative of Sz and Sp
         """
+        
+        last_t, dt = state
+        n = int((t - last_t)/dt)
+        pbar.update(n)
+        state[0] = last_t + dt * n
+    
         
         D=0*Y+0j
         
@@ -132,15 +138,20 @@ class ode_funs():
         return D   
 
 
-    def fun_2nd_all(self, t, Y, index):
+    def fun_2nd_all(self, t, Y, index, pbar, state):
         """
         return derivative of <Sz> , <Sp>,  <SpSm>, <SpSp>, <SpSz>, <SmSz>, <SzSz>
          by 2nd order approximation:
              <abc>=<ab><c>+<ac><b>+<bc><a>-2<a><b><c>  
              
-        The index thus contain 'z', '+', '-' '+-', '++','--' '+z', '-z', 'zz'     
+        The index thus contain 'z', '+', '-' '+-', '++','--', '+z', '-z', 'zz'     
     
         """
+        
+        last_t, dt = state
+        n = int((t - last_t)/dt)
+        pbar.update(n)
+        state[0] = last_t + dt * n        
         
         D=0*Y+0j
         
@@ -229,7 +240,7 @@ class ode_funs():
                         +self.gamma[m]*self.SSS('+-z',[l,m,m],Y,index)\
                         -self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
                     
-                    g4=self.gamma[l]*self.SSS('++z',[l,m,l],Y,index)\
+                    g4=self.gamma[l]*self.SSS('++z',[l,l,l],Y,index)\
                         +self.gamma[m]*self.SSS('++z',[l,m,m],Y,index)\
                         +self.gamma[m]*((l==m))*Y[index['++'][l,m]]
                     
@@ -242,15 +253,14 @@ class ode_funs():
                     g7=-self.gamma[l]*self.SSS('+-z',[l,l,m],Y,index)\
                         -self.gamma[m]*self.SSS('+-z',[m,m,l],Y,index)\
                         +self.gamma[l]*((l==m))*Y[index['+-'][l,l]]
-                        
-                        
+                                              
                 else:
                     print('Jump operator is not difined')
                     
                     
                 D[index['+-'][l,m]]=f3+g3
                 D[index['++'][l,m]]=f4+g4
-                D[index['--'][l,m]]=np.conjugate(D[index['++'][l,m]])
+                D[index['--'][l,m]]=np.conjugate(f4+g4)
                 D[index['+z'][l,m]]=f5+g5
                 D[index['-z'][l,m]]=f6+g6
                 D[index['zz'][l,m]]=f7+g7
