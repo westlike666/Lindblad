@@ -138,7 +138,7 @@ class ode_funs():
         return D   
 
 
-    def fun_2nd_all(self, t, Y, index, pbar, state):
+    def fun_2nd_all(self, t, Y, index):
         """
         return derivative of <Sz> , <Sp>,  <SpSm>, <SpSp>, <SpSz>, <SmSz>, <SzSz>
          by 2nd order approximation:
@@ -148,12 +148,12 @@ class ode_funs():
     
         """
         
-        last_t, dt = state
-        n = int((t - last_t)/dt)
-        pbar.update(n)
-        state[0] = last_t + dt * n        
+        # last_t, dt = state
+        # n = int((t - last_t)/dt)
+        # pbar.update(n)
+        # state[0] = last_t + dt * n        
         
-        D=0*Y+0j
+        D=0*Y
         
         for l in range(self.N):
             f1=0   #for Sz
@@ -192,7 +192,7 @@ class ode_funs():
                 for i in range(self.N):
                     f3 += -4j*(self.J[l,i]*self.SSS('+-z',[i,m,l],Y,index)\
                               -self.J[m,i]*self.SSS('+-z',[l,i,m],Y,index)\
-                              -(l==m)*self.J[l,i]*Y[index['+-'][i,l]])\
+                              -0*(l==m)*self.J[l,i]*Y[index['+-'][i,l]])\
                        +2j*((self.U[m,i]-self.U[l,i])*self.SSS('+-z',[l,m,i],Y,index)\
                             +self.U[m,l]*Y[index['+-'][l,m]])  
                     
@@ -238,7 +238,7 @@ class ode_funs():
                 elif self.Diss=='dissipation':
                     g3=self.gamma[l]*self.SSS('+-z',[l,m,l],Y,index)\
                         +self.gamma[m]*self.SSS('+-z',[l,m,m],Y,index)\
-                        -self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
+                        -0*self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
                     
                     g4=self.gamma[l]*self.SSS('++z',[l,l,l],Y,index)\
                         +self.gamma[m]*self.SSS('++z',[l,m,m],Y,index)\
@@ -327,10 +327,15 @@ class ode_funs():
          e.g. pmz='zzz', lm=(0,0,0) and       
         return S_zS_zS_z[0,0,0] 
         """
-        return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
-                +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
-                +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
-                -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+        # return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
+        #         +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
+        #         +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
+        #         -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
             
+        return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+    
+    
+    
+    
     
     
