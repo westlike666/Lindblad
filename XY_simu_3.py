@@ -20,7 +20,7 @@ import random
 
 
 L=2
-N=3
+N=2
 
 
 show_type='+-'
@@ -28,10 +28,10 @@ show_type='+-'
 show_ind=(0,1)
 
 model=XY(L,N)
-
-H=model.get_Hamiltonian(W=1, t=0, u=0)
+H=model.get_Hamiltonian(W=1, t=0.1, u=0.00, seed=1)
+print(model.eps, model.J, model.U)
 #rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=2)
+rho0=model.generate_random_density(seed=1)
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
@@ -44,7 +44,7 @@ SmSz=model.generate_SmSz()
 SzSz=model.generate_SzSz()
 
 
-G=0
+G=1
 #G=0
 
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
@@ -97,8 +97,8 @@ index=ode_funs.flat_index(['z', '+', '-'],[ '+-', '++','--','+z', '-z', 'zz' ], 
 
 
 
-with tqdm(total=1000, unit="‰") as pbar:
-    result2=solve_ivp(fun, t_span=t_span, y0=y2, t_eval=t_eval, args= [index, pbar,[t_0, (t_1-t_0)/1000]] ) 
+
+result2=solve_ivp(fun, t_span=t_span, y0=y2, t_eval=t_eval, args= [index]) 
 
 
 
