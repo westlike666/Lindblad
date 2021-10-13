@@ -156,7 +156,108 @@ class XY():
                 else:
                     ops_list.append(op)
         self.SpSm=ops_list
-        return self.SpSm        
+        return self.SpSm      
+    
+    def generate_SpSp(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sp=self.generate_Sp()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sp[i]*Sp[j] # the [i,j] element is Sp_i*Sp_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SpSp=ops_list
+        return self.SpSp      
+
+    def generate_SmSm(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sm=self.generate_Sm()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sm[i]*Sm[j] # the [i,j] element is Sm_i*Sm_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SmSm=ops_list
+        return self.SmSm   
+ 
+    def generate_SzSz(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sz=self.generate_Sz()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sz[i]*Sz[j] # the [i,j] element is Sz_i*Sz_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SzSz=ops_list
+        return self.SzSz
+    
+    def generate_SpSz(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sp=self.generate_Sp()
+        Sz=self.generate_Sz()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sp[i]*Sz[j] # the [i,j] element is Sp_i*Sz_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SpSz=ops_list
+        return self.SpSz
+
+    def generate_SmSz(self, flat=True):      
+        L=self.L       
+        N=self.N
+        ops_list=[]
+        
+        Sm=self.generate_Sm()
+        Sz=self.generate_Sz()
+        
+        for i in (range(N)):
+            if not flat:
+                ops_list.append([]) 
+            for j in range(N):
+                op=Sm[i]*Sz[j] # the [i,j] element is Sm_i*Sz_j
+                if not flat:
+                    ops_list[i].append(op)
+                else:
+                    ops_list.append(op)
+        self.SmSz=ops_list
+        return self.SmSz
+
+    
+    
+    
 
         
     def get_Hamiltonian(self, W=1, t=1, u=0):
@@ -170,7 +271,7 @@ class XY():
          
          eps=Energycomputer(N).constant_e(W)
          J=Jcomputer(N).constant_j(t)
-         U=Ucomputer(N).constant_u(u)
+         U=Ucomputer(N).uniformrandom_u(u)
          
          self.eps=eps
          self.J=J
@@ -243,7 +344,7 @@ class Gammacomputer():
     
  
 class Jcomputer():
-      def __init__(self, N, nn_only=False, scaled=True):
+      def __init__(self, N, nn_only=False, scaled=False):
           """
           ----------
           N : int. numbwer of sites .
