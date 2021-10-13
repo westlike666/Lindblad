@@ -260,7 +260,7 @@ class XY():
     
 
         
-    def get_Hamiltonian(self, W=1, t=1, u=0):
+    def get_Hamiltonian(self, W=1, t=1, u=0, seed=None):
          L=self.L
          N=self.N
          
@@ -269,16 +269,17 @@ class XY():
          Sp=self.generate_Sp()
          Sm=self.generate_Sm()
          
-         eps=Energycomputer(N).constant_e(W)
-         J=Jcomputer(N).constant_j(t)
-         U=Ucomputer(N).uniformrandom_u(u)
+         #np.random.seed(seed)
+         eps=Energycomputer(N,seed).uniformrandom_e(W)
+         J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
+         U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
          
          self.eps=eps
          self.J=J
          self.U=U
          
          for i in range(N):
-             H += eps[i]*Sz[i]
+             H += eps[i]*Sz[i]    
              for j in range(N):
                  H = H + J[i,j]*(Sp[i]*Sm[j]+Sp[j]*Sm[i])+ U[i,j]*Sz[i]*Sz[j]
          self.Halmitonian=H        
@@ -295,13 +296,13 @@ class XY():
         
     
 class Energycomputer():
-    def __init__(self,N):
+    def __init__(self, N, seed=None):
         """
         generate a list of onsite energies 
         """
         
         self.N=N 
-        self.rng=np.random.default_rng() #random number generator 
+        self.rng=np.random.default_rng(seed=seed) #random number generator 
         
         
     def constant_e(self, E=1):
@@ -320,23 +321,25 @@ class Energycomputer():
         energies : array
             onsite energies chosen from a uniform random distribution between -W/2 and W/2
         """
+        #np.random.seed(seed)
         energies = self.rng.uniform(-W/2, W/2, self.N)
         return energies
     
 
 class Gammacomputer():
-    def __init__(self, N):
+    def __init__(self, N, seed=None):
         """
         generate a list of dissipation rate gamma 
         """
         self.N=N 
-        self.rng=np.random.default_rng() #random number generator
+        self.rng=np.random.default_rng(seed) #random number generator
         
     def constant_g(self, g=1):
         gamma=g*np.ones(self.N)
         return gamma  
     
-    def uniformrandom_g(self, G=1):
+    def uniformrandom_g(self, G=1, seed=None):
+        np.random.seed(seed)
         gamma=self.rng.uniform(-G/2, G/2, self.N)
         return gamma
     
@@ -344,7 +347,7 @@ class Gammacomputer():
     
  
 class Jcomputer():
-      def __init__(self, N, nn_only=False, scaled=False):
+      def __init__(self, N, nn_only=False, scaled=False, seed=None):
           """
           ----------
           N : int. numbwer of sites .
@@ -356,7 +359,7 @@ class Jcomputer():
           self.N=N
           self.nn_only=nn_only 
           self.scaled=scaled
-          self.rng=np.random.default_rng()
+          self.rng=np.random.default_rng(seed=seed)
           
       def jfinder(self,t,x1,x2):
           """
@@ -402,7 +405,7 @@ class Ucomputer():
     
     
 
-      def __init__(self, N, nn_only=False, scaled=True):
+      def __init__(self, N, nn_only=False, scaled=True, seed=None):
           """
           ----------
           N : int. numbwer of sites .
@@ -414,7 +417,7 @@ class Ucomputer():
           self.N=N
           self.nn_only=nn_only 
           self.scaled=scaled
-          self.rng=np.random.default_rng()
+          self.rng=np.random.default_rng(seed)
           
       def ufinder(self,u,x1,x2):
           """
