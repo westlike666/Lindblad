@@ -23,12 +23,12 @@ L=2
 N=2
 
 
-show_type='+-'
+show_type='z'
 #show_ind=random.randrange(N)
-show_ind=(0,1)
+show_ind=(1)
 
 model=XY(L,N)
-H=model.get_Hamiltonian(W=1, t=0.1, u=0.00, seed=1)
+H=model.get_Hamiltonian(W=1, t=0.1, u=0, seed=1)
 print(model.eps, model.J, model.U)
 #rho0=model.generate_coherent_density()
 rho0=model.generate_random_density(seed=1)
@@ -132,7 +132,7 @@ ops=Options(tidy=(False), average_expect=(False))
 result3=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None) 
 
 
-#plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
+plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
 plt.plot(result2.t, result2.y[index[show_type][show_ind]], label='2nd-order approx')
 plt.plot(result3.times, result3.expect[index[show_type][show_ind]], label='Qutip solved Lindblad') 
 plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
@@ -141,7 +141,7 @@ plt.ylabel("$<S^{}_{}>$".format(show_type, show_ind))
 plt.legend()  
 
 plt.figure()
-#plt.plot(result1.t, result1.y[index[show_type][show_ind]].imag, label='1st-order approx')
+plt.plot(result1.t, result1.y[index[show_type][show_ind]].imag, label='1st-order approx')
 plt.plot(result2.t, result2.y[index[show_type][show_ind]].imag, label='2nd-order approx')
 plt.plot(result3.times, result3.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad') 
 plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
