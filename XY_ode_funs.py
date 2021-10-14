@@ -240,7 +240,7 @@ class ode_funs():
                         +self.gamma[m]*self.SSS('+-z',[l,m,m],Y,index)\
                         -0*self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
                     
-                    g4=self.gamma[l]*self.SSS('++z',[l,l,l],Y,index)\
+                    g4=self.gamma[l]*self.SSS('++z',[m,l,l],Y,index)\
                         +self.gamma[m]*self.SSS('++z',[l,m,m],Y,index)\
                         +self.gamma[m]*((l==m))*Y[index['++'][l,m]]
                     
