@@ -91,8 +91,7 @@ class ode_funs():
     def fun_2nd(self, t, Y, index):
         """
         return derivative of <Sz> and <SpSm> by breaking <SpSmSz=<SpSm><Sz>
-        """
-        
+        """      
         D=0*Y+0j
         
         for l in range(self.N):
@@ -170,8 +169,8 @@ class ode_funs():
                     g2=-1/2*self.gamma[l]*Y[index['+'][l]]                  
                     
                 elif self.Diss=='dissipation':
-                    g1=-self.gamma[l]*Y[index['+-'][l,l]]
-                    g2=self.gamma[l]*Y[index['+z'][l,l]]   
+                    g1=-self.gamma[l]*self.SS('+-',[l,l],Y,index)
+                    g2=self.gamma[l]*self.SS('+z',[l,l],Y,index)   
                 else:
                     print('Jump operator is not difined')                      
             D[index['z'][l]] = f1+g1
@@ -192,15 +191,15 @@ class ode_funs():
                 for i in range(self.N):
                     f3 += -4j*(self.J[l,i]*self.SSS('+-z',[i,m,l],Y,index)\
                               -self.J[m,i]*self.SSS('+-z',[l,i,m],Y,index)\
-                              -0*(l==m)*self.J[l,i]*Y[index['+-'][i,l]])\
+                              -(l==m)*self.J[l,i]*self.SS('+-', [i,l], Y, index))\
                        +2j*((self.U[m,i]-self.U[l,i])*self.SSS('+-z',[l,m,i],Y,index)\
-                            +self.U[m,l]*Y[index['+-'][l,m]])  
+                            +self.U[m,l]*self.SS('+-',[l,m],Y,index))  
                     
                     f4 += -4j*(self.J[l,i]*self.SSS('++z',[i,m,l],Y,index)\
                               +self.J[m,i]*self.SSS('++z',[l,i,m],Y,index)\
-                              +(l==m)*self.J[l,i]*Y[index['++'][i,l]])\
+                              +(l==m)*self.J[l,i]*self.SS('++',[i,l],Y,index))\
                        -2j*((self.U[m,i]+self.U[l,i])*self.SSS('++z',[l,m,i],Y,index)\
-                            +self.U[m,l]*Y[index['++'][l,m]])
+                            +self.U[m,l]*self.SS('++',[l,m],Y,index))
                            
                     f5 += -2j*self.J[m,i]*(self.SSS('++-',[l,m,i],Y,index)\
                                            -self.SSS('++-',[i,l,m],Y,index))\
@@ -210,8 +209,8 @@ class ode_funs():
                     f6 += -2j*self.J[m,i]*(self.SSS('+--',[m,l,i],Y,index)\
                                            -self.SSS('+--',[i,l,m],Y,index))\
                         +4j*(self.J[l,i]*self.SSS('-zz',[i,l,m],Y,index)
-                             -self.J[m,l]*Y[index['-z'][m,l]])\
-                        +4j*(m==l)*self.J[i,l]*Y[index['-z'][i,l]]\
+                             -self.J[m,l]*self.SS('-z',[m,l],Y,index))\
+                        +4j*(m==l)*self.J[i,l]*self.SS('-z',[i,l],Y,index)\
                         +2j*self.U[i,l]*self.SSS('-zz',[l,m,i],Y,index)
                                 
                      
@@ -219,15 +218,15 @@ class ode_funs():
                                            -self.SSS('+-z',[i,m,l],Y,index))\
                           -2j*self.J[l,i]*(self.SSS('+-z',[l,i,m],Y,index)\
                                            -self.SSS('+-z',[i,l,m],Y,index))\
-                          -2j*(m==l)*self.J[l,i]*(Y[index['+-'][l,i]]+Y[index['+-'][i,l]])\
-                          +2j*self.J[m,l]*(Y[index['+-'][m,l]]+Y[index['+-'][l,m]])    
+                          -2j*(m==l)*self.J[l,i]*(self.SS('+-',[l,i],Y,index)+self.SS('+-',[i,l],Y,index))\
+                          +2j*self.J[m,l]*(self.SS('+-',[m,l],Y,index)+self.SS('+-',[l,m],Y,index))    
                             
                         
                            
                 if self.Diss=='dephasing':             
-                    g3=1/2*(self.gamma[l]+self.gamma[m])*((m==l)-1)*Y[index['+-'][l,m]]
+                    g3=1/2*(self.gamma[l]+self.gamma[m])*((m==l)*self.SS('+-',[l,m],Y,index)-Y[index['+-'][l,m]])
                     
-                    g4=-1/2*(self.gamma[l]+self.gamma[m])*((m==l)+1)*Y[index['++'][l,m]]
+                    g4=-1/2*(self.gamma[l]+self.gamma[m])*((m==l)*self.SS('++',[l,m],Y,index)+Y[index['++'][l,m]])
                     
                     g5=-1/2*self.gamma[l]*Y[index['+z'][l,m]]
                     
@@ -238,21 +237,21 @@ class ode_funs():
                 elif self.Diss=='dissipation':
                     g3=self.gamma[l]*self.SSS('+-z',[l,m,l],Y,index)\
                         +self.gamma[m]*self.SSS('+-z',[l,m,m],Y,index)\
-                        -0*self.gamma[m]*(1+(l==m))*Y[index['+-'][l,m]] 
-                    
-                    g4=self.gamma[l]*self.SSS('++z',[l,l,l],Y,index)\
+                        -self.gamma[m]*(1+(l==m))*self.SS('+-',[l,m],Y,index)
+                
+                    g4=self.gamma[l]*self.SSS('++z',[m,l,l],Y,index)\
                         +self.gamma[m]*self.SSS('++z',[l,m,m],Y,index)\
-                        +self.gamma[m]*((l==m))*Y[index['++'][l,m]]
+                        +self.gamma[m]*((l==m))*self.SS('++',[l,l],Y,index)
                     
                     g5=self.gamma[l]*self.SSS('+zz',[l,l,m],Y,index)\
                         -self.gamma[m]*self.SSS('++-',[l,m,m],Y,index)
                         
-                    g6=self.gamma[l]*(self.SSS('-zz',[l,l,m],Y,index)-Y[index['-z'][l,m]])\
+                    g6=self.gamma[l]*(self.SSS('-zz',[l,l,m],Y,index)-self.SS('-z',[l,m],Y,index))\
                         -self.gamma[m]*self.SSS('+--',[m,l,m],Y,index)
                     
                     g7=-self.gamma[l]*self.SSS('+-z',[l,l,m],Y,index)\
                         -self.gamma[m]*self.SSS('+-z',[m,m,l],Y,index)\
-                        +self.gamma[l]*((l==m))*Y[index['+-'][l,l]]
+                        +self.gamma[l]*((l==m))*self.SS('+-',[l,l],Y,index)
                                               
                 else:
                     print('Jump operator is not difined')
@@ -313,9 +312,11 @@ class ode_funs():
         length 2
         
         e.g. pmz='zz', lm=(0,0) and       
-        return S_zS_z[0,0] 
+        return S_z[0]*S_z[0] 
         """
-        return Y[index[pmz][lm]]
+#        return Y[index[pmz][lm]]
+        return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]
+
     
     def SSS(self, pmz, lm, Y, index):
         
@@ -327,12 +328,12 @@ class ode_funs():
          e.g. pmz='zzz', lm=(0,0,0) and       
         return S_zS_zS_z[0,0,0] 
         """
-        # return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
-        #         +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
-        #         +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
-        #         -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+        return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
+                 +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
+                 +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
+                 -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
             
-        return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+        #return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
     
     
     
