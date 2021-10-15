@@ -254,7 +254,46 @@ class XY():
                     ops_list.append(op)
         self.SmSz=ops_list
         return self.SmSz
-
+    
+    def str2op(self, s):
+        if s=='z':
+            return self.generate_Sz()
+        elif s=='+':
+            return self.generate_Sp()
+        elif s=='-':
+            return self.generate_Sm()
+        else:
+            print('spin operator is not difined')
+            
+      
+    def generate_single_ops(self, single_ops):
+        e_ops=[]
+        for s in single_ops:
+            S=self.str2op(s)
+            e_ops += S
+        return e_ops    
+      
+        
+    def generate_double_ops(self, double_ops, flat=True):
+        N=self.N
+        e_ops=[]
+        for ss in double_ops:
+            S1=self.str2op(ss[0])
+            S2=self.str2op(ss[1])
+            S1S2=[]
+            for i in (range(N)):
+                if not flat:
+                    S1S2.append([]) 
+                for j in range(N):
+                    op=S1[i]*S2[j] # the [i,j] element is Sm_i*Sz_j
+                    if not flat:
+                        S1S2[i].append(op)
+                    else:
+                        S1S2.append(op)
+            e_ops += S1S2
+        return e_ops     
+        
+        
     
     
     

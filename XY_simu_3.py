@@ -20,15 +20,15 @@ import random
 
 
 L=2
-N=2
+N=5
 
 
-show_type='z'
+show_type='z' 
 #show_ind=random.randrange(N)
 show_ind=(1)
 
 model=XY(L,N)
-H=model.get_Hamiltonian(W=1, t=0.1, u=0, seed=1)
+H=model.get_Hamiltonian(W=1, t=0.2, u=0, seed=1)
 print(model.eps, model.J, model.U)
 #rho0=model.generate_coherent_density()
 rho0=model.generate_random_density(seed=1)
@@ -36,12 +36,7 @@ rho0=model.generate_random_density(seed=1)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-SpSm=model.generate_SpSm()
-SpSp=model.generate_SpSp()
-SmSm=model.generate_SmSm()
-SpSz=model.generate_SpSz()
-SmSz=model.generate_SmSz()
-SzSz=model.generate_SzSz()
+
 
 
 G=1
@@ -66,11 +61,11 @@ y1=expect(e_ops, rho0)
    
 
 
-ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
+ode_class=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
 
-fun=ode_funs.fun_1st
+fun=ode_class.fun_1st
 
-index=ode_funs.flat_index(single_ops=['z', '+'], double_ops=[], index={}) 
+index=ode_class.flat_index(single_ops=['z', '+'], double_ops=[], index={}) 
 
 t_0=0
 t_1=100
@@ -87,16 +82,19 @@ with tqdm(total=100, unit="‰") as pbar:
 """
 sloving by semi-classical 2nd order: <abc>=<ab><c>+<ac><b>+<bc><a>-2<a><b><c>  
 """
-e_ops=Sz+Sp+Sm+SpSm+SpSp+SmSm+SpSz+SmSz+SzSz
+
+
+
+   
+fun=ode_class.fun_2nd_all
+
+(s, ss) = ode_class.generate_full_op_list()
+
+e_ops=model.generate_single_ops(s)+model.generate_double_ops(ss)
+
+index=ode_class.flat_index(s, ss, index={})
 
 y2=expect(e_ops, rho0)
-   
-fun=ode_funs.fun_2nd_all
-
-index=ode_funs.flat_index(['z', '+', '-'],[ '+-', '++','--','+z', '-z', 'zz' ], index={}) 
-
-
-
 
 result2=solve_ivp(fun, t_span=t_span, y0=y2, t_eval=t_eval, args= [index]) 
 
