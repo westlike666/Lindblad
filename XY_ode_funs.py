@@ -144,6 +144,8 @@ class ode_funs():
              
         The index thus contain 'z', '+', '-' '+-', '++', '--', '-+', 'z+', 'z-' , '+z', '-z', 'zz'     
     
+            
+        no order swapping
         """
         
         # last_t, dt = state
