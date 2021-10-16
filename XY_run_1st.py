@@ -51,7 +51,7 @@ gamma=model.generate_gamma(G1)
 
 #print(model.eps, model.J, model.U)
 #rho0=model.generate_coherent_density()
-rho0=model.generate_random_density()
+rho0=model.generate_random_density(seed=None)
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
