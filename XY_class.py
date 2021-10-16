@@ -38,11 +38,13 @@ class XY():
 
         
         state_list=[]
-        np.random.seed(seed)
-        state=rand_dm(L,pure=pure)
-        print(state)
+
+        
         
         for i in (range(N)):
+            #np.random.seed(seed)
+            state=rand_dm(L,pure=pure,seed=seed)
+            #print(state)
             state_list.append(state)     
         rho=tensor(state_list) 
         
