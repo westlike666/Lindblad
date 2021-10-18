@@ -41,17 +41,17 @@ show_ind=(1)
 
 model=XY(L,N)
 
-eps_comp=Energycomputer(N,seed).uniformrandom_e(W)
-J_comp=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
-U_comp=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
+eps=Energycomputer(N,seed).uniformrandom_e(W)
+J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
+U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 #G_comp=Gammacomputer(N).constant_g(G)    
 
-H=model.get_Hamiltonian2(eps_comp, J_comp, U_comp)
+H=model.get_Hamiltonian2(eps, J, U)
 gamma=model.generate_gamma(G1)
 
 #print(model.eps, model.J, model.U)
-#rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=None)
+rho0=model.generate_coherent_density()
+#rho0=model.generate_random_density(seed=None)
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
