@@ -170,8 +170,8 @@ class ode_funs():
                 D[index['+'][l]] +=-1/2*self.gamma[l]*Y[index['+'][l]]                  
                     
             elif self.Diss=='dissipation':
-                D[index['z'][l]] += -self.gamma[l]*self.SS('+-',[l,l],Y,index)
-                D[index['+'][l]] += self.gamma[l]*self.SS('+z',[l,l],Y,index) 
+                D[index['z'][l]] += -self.gamma[l]*self.SS('+-',(l,l),Y,index)
+                D[index['+'][l]] += self.gamma[l]*self.SS('+z',(l,l),Y,index) 
             else:
                 print('Jump operator is not difined')   
                     
@@ -342,12 +342,12 @@ class ode_funs():
          e.g. pmz='zzz', lm=(0,0,0) and       
         return S_zS_zS_z[0,0,0] 
         """
-        # return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
-        #           +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
-        #           +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
-        #           -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+        return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
+                  +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
+                  +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
+                  -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
             
-        return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+        #return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
     
     
     def SSS2(self, pmz, lm, Y, index):
