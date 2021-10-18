@@ -22,16 +22,28 @@ import random
 L=2
 N=5
 
+W=1
+t=0.1
+u=0
+G=1
+
+seed=None
 
 show_type='z' 
 #show_ind=random.randrange(N)
 show_ind=(1)
 
 model=XY(L,N)
-H=model.get_Hamiltonian(W=1, t=0.2, u=0, seed=1)
-print(model.eps, model.J, model.U)
-#rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=1)
+
+eps=Energycomputer(N,seed).uniformrandom_e(W)
+J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
+U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
+
+H=model.get_Hamiltonian2(eps, J, U)
+
+rho0=model.generate_coherent_density()
+#rho0=model.generate_random_density(seed=1)
+
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
@@ -39,7 +51,6 @@ Sm=model.Sm
 
 
 
-G=1
 #G=0
 
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
