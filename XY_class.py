@@ -51,15 +51,15 @@ class XY():
         self.random_rho=rho
         return self.random_rho
     
-    def generate_coherent_density(self,pure=True):   
+    def generate_coherent_density(self, alpha=np.pi/4, pure=True):   
         
         L=self.L # number of levels 
         N=self.N # number of sites 
 
         
         state_list=[]
-        state=coherent_dm(L,np.pi/4)
-        
+        state=coherent_dm(L, alpha)
+        print(state)
         for i in (range(N)):
             state_list.append(state)     
         rho=tensor(state_list) 
@@ -81,7 +81,7 @@ class XY():
         Sz=[]
             
         
-        for i in tqdm(range(N)):
+        for i in (range(N)):
             op_list=[]
             for m in range(N):
                 op_list.append(qeye(L))
@@ -331,9 +331,8 @@ class XY():
         return self.gamma
         
 
-    def get_Hamiltonian2(self, eps_comp, J_comp, U_comp):
+    def get_Hamiltonian2(self, eps, J, U):
          """
-         this one takes functions rather than parameters as input
          """
          L=self.L
          N=self.N
@@ -344,9 +343,9 @@ class XY():
          Sm=self.generate_Sm()
          
          #np.random.seed(seed)
-         eps=eps_comp
-         J=J_comp
-         U=U_comp
+         # eps=eps_comp
+         # J=J_comp
+         # U=U_comp
          
          self.eps=eps
          self.J=J
