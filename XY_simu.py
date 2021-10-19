@@ -44,14 +44,14 @@ U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 H=model.get_Hamiltonian2(eps, J, U)
 
 rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
-#rho0=model.generate_random_density(seed=1)
+#rho0=model.generate_random_density(seed=None)
 
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
 #G=0.000000000000000
-G=0.1
+G=0.0
 
 gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
@@ -117,6 +117,14 @@ result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None)
 
 # plt.plot(result3.t, expect_value[index[show_type][show_ind]], label='solve_ivp solved Lindblad') 
 
+z1=result1.y[index[show_type][show_ind]]
+z2=result2.expect[index[show_type][show_ind]]
+
+err=np.linalg.norm(z1-z2)/np.linalg.norm(z2)
+
+print("--- error for N={} sites is: {} ---\n" .format(N, err))
+
+
 plt.figure()
 plt.plot(result1.t, result1.y[index[show_type][show_ind]].real, label='1st-order approx')
 plt.plot(result2.times, result2.expect[index[show_type][show_ind]].real, label='Qutip solved Lindblad') 
@@ -134,7 +142,14 @@ plt.ylabel("$<S^{}_{}>^*$".format(show_type, show_ind))
 plt.legend()  
 
 
+y1=y0
+y2=result1.y[:,-1]
 
+plt.figure()
+plt.plot(y1,'o', label='initial')
+plt.plot(y2, 'x', label='final')
+plt.legend()
+    
 
 
     
