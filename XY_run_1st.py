@@ -17,6 +17,7 @@ from qutip import*
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
 
+
 L=2
 N=3
 
@@ -35,7 +36,7 @@ t_2=200
 
 seed=1
 
-show_type='z' 
+show_type='+' 
 #show_ind=random.randrange(N)
 show_ind=(1)
 
@@ -50,7 +51,7 @@ H=model.get_Hamiltonian2(eps, J, U)
 gamma=model.generate_gamma(G1)
 
 #print(model.eps, model.J, model.U)
-rho0=model.generate_coherent_density()
+rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
 #rho0=model.generate_random_density(seed=None)
 #print(rho0)
 Sz=model.Sz
@@ -60,9 +61,6 @@ Sm=model.Sm
 
  # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
 
-eps=model.eps
-J=model.J
-U=model.U
 
 #Diss='dephasing' 
 Diss='dissipation'
