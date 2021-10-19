@@ -363,6 +363,8 @@ class XY():
         self.gamma=G_comp
         return self.gamma          
 
+
+  
         
             
             
