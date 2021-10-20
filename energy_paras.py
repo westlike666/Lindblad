@@ -55,8 +55,21 @@ class Gammacomputer():
     
     def uniformrandom_g(self, G=1, seed=None):
 
-        gamma=self.rng.uniform(-G/2, G/2, self.N)
+        gamma=self.rng.uniform(0, G, self.N)
         return gamma
+    
+    def central_g(self, G=1):
+        gamma=np.zeros(self.N)
+        center=self.N//2
+        gamma[center]=G
+        return gamma
+    
+    def boundary_g(self, G=1):
+        gamma=np.zeros(self.N)
+        gamma[0]=G
+        return gamma
+        
+    
     
     
     
