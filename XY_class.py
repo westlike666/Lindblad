@@ -327,7 +327,7 @@ class XY():
          return H  
      
     def generate_gamma(self, G=1):   
-        self.gamma=Gammacomputer(self.N).constant_g(G)    
+        self.gamma=Gammacomputer(self.N).uniformrandom_g(G)
         return self.gamma
         
 
