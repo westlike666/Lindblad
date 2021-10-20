@@ -20,13 +20,13 @@ import argparse
 
 def main():
     L=2
-    N=1
+    N=5
     
     W=1
     t=1
     u=0
     G1=0.0
-    G2=1
+    G2=0.1
     
     t_0=0
     t_1=100
@@ -42,7 +42,7 @@ def main():
     eps=Energycomputer(N,seed).uniformrandom_e(W)
     J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
     U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-    gamma=Gammacomputer(N).constant_g(G1) 
+    gamma=model.generate_gamma(G1) 
         
     rng=np.random.default_rng(seed=seed)    
     
@@ -101,7 +101,7 @@ def main():
     
     
     
-    gamma=Gammacomputer(N).boundary_g(G2)
+    gamma=model.generate_gamma(G2)
     ode_class=ode_funs(N, eps, J, U, gamma, Diss=Diss)
     fun=ode_class.fun_1st
     
@@ -135,15 +135,12 @@ def main():
         plt.legend()  
         plt.suptitle('XY model L=%d, N=%d  t=%.1f W  g=%.1f W for ' % (L,N,t,G2)+Diss)
     
-    show_ind=random.randrange(N)
-    #show_ind=1
+#    show_ind=random.randrange(N)
+    show_ind=0
     plot_evolution('z',show_ind)
     plot_evolution('+',show_ind)
     
-    
-    
-    
-    
+
     plt.figure()
     plt.plot(y1,'o', label='y1')
     plt.plot(y2, 'x', label='y2')
