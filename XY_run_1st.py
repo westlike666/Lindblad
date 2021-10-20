@@ -15,11 +15,11 @@ from datetime import datetime
 from tqdm import tqdm
 from qutip import*
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
-
+import random
 
 
 L=2
-N=3
+N=5
 
 W=1
 t=1
@@ -36,19 +36,18 @@ t_2=200
 
 seed=1
 
-show_type='+' 
-#show_ind=random.randrange(N)
-show_ind=(1)
+show_type='z' 
+show_ind=random.randrange(N)
+#show_ind=(1)
 
 model=XY(L,N)
 
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-#G_comp=Gammacomputer(N).constant_g(G)    
+gamma=Gammacomputer(N).constant_g(G1)    
 
 H=model.get_Hamiltonian2(eps, J, U)
-gamma=model.generate_gamma(G1)
 
 #print(model.eps, model.J, model.U)
 rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
@@ -105,7 +104,7 @@ y2=result1.y[:,-1]
 
 
 
-gamma=model.generate_gamma(G2)
+gamma=Gammacomputer(N).central_g(G2)
 ode_class=ode_funs(N, eps, J, U, gamma, Diss=Diss)
 fun=ode_class.fun_1st
 
