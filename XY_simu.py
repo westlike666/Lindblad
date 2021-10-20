@@ -20,13 +20,14 @@ from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
 
 L=2
-N=3
+N=7
 
 W=1
-t=0.1
+t=1
 u=0
 
-seed=1
+G=1
+seed=None
 
 show_type='z'
 #show_ind=random.randrange(N)
@@ -38,22 +39,22 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-
-#G_comp=Gammacomputer(N).constant_g(G)    
+gamma=Gammacomputer(N).central_g(G)
+   
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
-#rho0=model.generate_random_density(seed=None)
+#rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
+rho0=model.generate_random_density(seed=None)
 
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
-#G=0.000000000000000
-G=0.0
 
-gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+
+
+
 
 
 """
@@ -125,30 +126,36 @@ err=np.linalg.norm(z1-z2)/np.linalg.norm(z2)
 print("--- error for N={} sites is: {} ---\n" .format(N, err))
 
 
-plt.figure()
-plt.plot(result1.t, result1.y[index[show_type][show_ind]].real, label='1st-order approx')
-plt.plot(result2.times, result2.expect[index[show_type][show_ind]].real, label='Qutip solved Lindblad') 
-plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
-plt.xlabel('t')
-plt.ylabel("$<S^{}_{}>$".format(show_type, show_ind))
-plt.legend()  
+def plot_evolution(show_type='z', show_ind=0):
+    
+    time=result1.t
+    plt.figure()
+    #plt.subplot(211)
+    plt.plot(time, result1.y[index[show_type][show_ind]], label='1st-order approx') 
+    plt.plot(time, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad')
+    plt.ylabel("$Re <S^{}_{}>$".format(show_type, show_ind))
+    plt.axhline(y=-0.5, color='grey', linestyle='--')
+    plt.legend() 
+    # plt.subplot(212)
+    # plt.plot(time, result1.y[index[show_type][show_ind]].imag, label='1st-order approx') 
+    # plt.plot(time, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad')
+    # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
+    # plt.legend()
+    plt.xlabel('t')
+    plt.suptitle('XY model L=%d, N=%d  t=%.1f W  g=%.1f W for ' % (L,N,t,G)+Diss)
 
-plt.figure()
-plt.plot(result1.t, result1.y[index[show_type][show_ind]].imag, label='1st-order approx')
-plt.plot(result2.times, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad') 
-plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
-plt.xlabel('t')
-plt.ylabel("$<S^{}_{}>^*$".format(show_type, show_ind))
-plt.legend()  
+
+plot_evolution('+',show_ind)
+plot_evolution('z', show_ind)
 
 
-y1=y0
-y2=result1.y[:,-1]
+# y1=y0
+# y2=result1.y[:,-1]
 
-plt.figure()
-plt.plot(y1,'o', label='initial')
-plt.plot(y2, 'x', label='final')
-plt.legend()
+# plt.figure()
+# plt.plot(y1,'o', label='initial')
+# plt.plot(y2, 'x', label='final')
+# plt.legend()
     
 
 
