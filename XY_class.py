@@ -58,7 +58,7 @@ class XY():
 
         
         state_list=[]
-        state=coherent_dm(L, alpha)
+        state=coherent(L, alpha)
         print(state)
         for i in (range(N)):
             state_list.append(state)     
