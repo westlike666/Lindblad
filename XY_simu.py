@@ -23,7 +23,7 @@ L=2
 N=7
 
 W=1
-t=1
+t=2
 u=0
 
 G=1
@@ -37,10 +37,11 @@ model=XY(L,N)
 
 
 eps=Energycomputer(N,seed).uniformrandom_e(W)
-J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).uniformrandom_j(t)
+J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
-   
+#gamma=Gammacomputer(N).boundary_g(G)
+#gamma=Gammacomputer(N).site_g(G,[2,3,4])
 
 H=model.get_Hamiltonian2(eps, J, U)
 
@@ -73,7 +74,7 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=100
+t_1=1000
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000 )
 
@@ -144,9 +145,9 @@ def plot_evolution(show_type='z', show_ind=0):
     plt.xlabel('t')
     plt.suptitle('XY model L=%d, N=%d  t=%.1f W  g=%.1f W for ' % (L,N,t,G)+Diss)
 
-
-plot_evolution('+',show_ind)
-plot_evolution('z', show_ind)
+for show_ind in range(N):
+    plot_evolution('+',show_ind)
+    plot_evolution('z', show_ind)
 
 
 # y1=y0
