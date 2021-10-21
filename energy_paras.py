@@ -68,7 +68,11 @@ class Gammacomputer():
         gamma=np.zeros(self.N)
         gamma[0]=G
         return gamma
-        
+    
+    def site_g(self, G=1, site=[0]):
+        gamma=np.zeros(self.N)
+        gamma[site]=G
+        return gamma
     
     
     
