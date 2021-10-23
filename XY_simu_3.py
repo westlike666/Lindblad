@@ -41,8 +41,8 @@ U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-rho0=model.generate_coherent_density()
-#rho0=model.generate_random_density(seed=1)
+#rho0=model.generate_coherent_density()
+rho0=model.generate_random_density(seed=None)
 
 #print(rho0)
 Sz=model.Sz
