@@ -47,7 +47,7 @@ gamma=Gammacomputer(N).central_g(G)
 H=model.get_Hamiltonian2(eps, J, U)
 
 #rho0=model.generate_coherent_density(alpha=1*np.pi/9)
-rho0=model.generate_random_density(pure=True,seed=11)
+rho0=model.generate_random_density(pure=True,seed=10)
 
 #print(rho0)
 Sz=model.Sz
