@@ -40,14 +40,14 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-#gamma=Gammacomputer(N).central_g(G)
-gamma=Gammacomputer(N).boundary_g(G)
+gamma=Gammacomputer(N).central_g(G)
+#gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[2,3,4])
 
 H=model.get_Hamiltonian2(eps, J, U)
 
 #rho0=model.generate_coherent_density(alpha=1*np.pi/9)
-rho0=model.generate_random_density(seed=None)
+rho0=model.generate_random_density(pure=True,seed=11)
 
 #print(rho0)
 Sz=model.Sz
