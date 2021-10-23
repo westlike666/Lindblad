@@ -20,7 +20,7 @@ from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
 
 L=2
-N=7
+N=5
 
 W=1
 t=1
@@ -45,8 +45,8 @@ gamma=Gammacomputer(N).central_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
-#rho0=model.generate_random_density(seed=None)
+#rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
+rho0=model.generate_random_density(pure=True, seed=None) # 5, 6, 10, 11
 
 #print(rho0)
 Sz=model.Sz
@@ -115,7 +115,7 @@ result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None)
 
 
 
-# result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops=e_ops)  
+#result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops=e_ops)  
 
 # plt.plot(result3.t, expect_value[index[show_type][show_ind]], label='solve_ivp solved Lindblad') 
 
@@ -134,6 +134,7 @@ def plot_evolution(show_type='z', show_ind=0):
     #plt.subplot(211)
     plt.plot(time, result1.y[index[show_type][show_ind]], label='1st-order approx') 
     plt.plot(time, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad')
+    #plt.plot(result3.t, expect_value[index[show_type][show_ind]], '--' ,label='solve_ivp solved Lindblad') 
     plt.ylabel("$Re <S^{}_{}>$".format(show_type, show_ind))
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend() 
