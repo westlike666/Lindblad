@@ -6,6 +6,8 @@ Created on Wed Oct 20 17:53:05 2021
 """
 
 import numpy as np
+import os
+import utils
 from XY_class import*
 from XY_ode_funs import ode_funs
 import matplotlib.pyplot as plt
@@ -18,9 +20,13 @@ import random
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
+save=False
+if save:
+    path='results\\'+utils.get_run_time()
+    os.mkdir(path)
 
 L=2
-N=7
+N=5
 
 W=1
 t=1
@@ -47,7 +53,9 @@ gamma=Gammacomputer(N).central_g(G)
 H=model.get_Hamiltonian2(eps, J, U)
 
 #rho0=model.generate_coherent_density(alpha=1*np.pi/9)
-rho0=model.generate_random_density(pure=True,seed=10)
+states,rho0=model.generate_random_density(pure=True,seed=10)
+#states,rho0=model.generate_random_ket(seed=7)
+print(states)
 
 #print(rho0)
 Sz=model.Sz
@@ -72,9 +80,9 @@ ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=100
+t_1=0
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 1000)
+t_eval=np.linspace(t_0, t_1, 1)
 
 
 
@@ -119,7 +127,7 @@ y2=expect(e_ops, result2.states)
 
 def plot_evolution(show_type='z', show_ind=0):
     t_total=np.append(result1.times, result2.times)
-    y_total=np.append(y1[index[show_type][show_ind]],y2[index[show_type][show_ind]])
+    y_total=np.append(y1[index[show_type][show_ind]].real,y2[index[show_type][show_ind]].real)
 
     plt.figure(show_ind)
     #plt.subplot(211)
@@ -133,8 +141,16 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
     # plt.legend()
     plt.xlabel('t')
-    plt.suptitle('XY model L=%d, N=%d  t=%.1f W  g=%.1f W from one end' % (L,N,t,G))
-
+    plt.suptitle('XY model L=%d, N=%d  eps=%.2f  t=%.1f W  g=%.1f W from one end' % (L,N, eps[show_ind],t,G))
 for show_ind in range(N):
     plot_evolution('+',show_ind)
     plot_evolution('z', show_ind)
+     
+    
+
+
+
+
+    
+    
+    
