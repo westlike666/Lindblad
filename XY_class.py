@@ -35,12 +35,9 @@ class XY():
         
         L=self.L # number of levels 
         N=self.N # number of sites 
-
         
         state_list=[]
 
-        
-        
         for i in (range(N)):
             #np.random.seed(seed)
             state=rand_dm(L,pure=pure,seed=seed)
@@ -49,7 +46,25 @@ class XY():
         rho=tensor(state_list) 
         
         self.random_rho=rho
-        return self.random_rho
+        return state_list,self.random_rho
+    
+    def generate_random_ket(self,seed=None):   
+        
+        L=self.L # number of levels 
+        N=self.N # number of sites 
+        
+        state_list=[]
+
+        for i in (range(N)):
+            #np.random.seed(seed)
+            state=rand_ket(L,seed=seed)
+            #print(state)
+            state_list.append(state)     
+        rho=tensor(state_list) 
+        
+        self.random_rho=rho
+        return state_list,self.random_rho    
+    
     
     def generate_coherent_density(self, alpha=np.pi/4, pure=True):   
         
