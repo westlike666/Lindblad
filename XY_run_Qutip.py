@@ -43,7 +43,7 @@ show_ind=0
 model=XY(L,N)
 
 
-eps=Energycomputer(N,seed).uniformrandom_e(W)
+eps=Energycomputer(N,seed).constant_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
@@ -52,10 +52,11 @@ gamma=Gammacomputer(N).central_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-#rho0=model.generate_coherent_density(alpha=1*np.pi/9)
-states,rho0=model.generate_random_density(pure=True,seed=10)
-#states,rho0=model.generate_random_ket(seed=7)
+#states,rho0=model.generate_coherent_density(alpha=1*np.pi/4)
+#states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
+states,rho0=model.generate_random_ket(seed=None)
 print(states)
+print(eps)
 
 #print(rho0)
 Sz=model.Sz
