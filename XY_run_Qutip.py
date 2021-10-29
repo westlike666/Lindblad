@@ -26,7 +26,7 @@ if save:
     os.mkdir(path)
 
 L=2
-N=5
+N=7
 
 W=1
 t=1
@@ -44,7 +44,7 @@ model=XY(L,N)
 
 
 eps=Energycomputer(N,seed).constant_e(W)
-J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
+J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
