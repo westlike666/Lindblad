@@ -29,7 +29,7 @@ L=2
 N=7
 
 W=1
-t=1
+t=0.15
 u=0
 
 G=1
@@ -44,7 +44,7 @@ model=XY(L,N)
 
 
 eps=Energycomputer(N,seed).constant_e(W)
-J=Jcomputer(N, nn_only=False, scaled=False, seed=seed).constant_j(t)
+J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
@@ -81,9 +81,9 @@ ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=0
+t_1=100
 t_span=(t_0,t_1)
-t_eval=np.linspace(t_0, t_1, 1)
+t_eval=np.linspace(t_0, t_1, 1000)
 
 
 
