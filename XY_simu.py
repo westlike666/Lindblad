@@ -26,7 +26,7 @@ W=1
 t=1
 u=0
 
-G=1
+G=0.1
 seed=None
 
 show_type='z'
@@ -36,19 +36,20 @@ show_ind=0
 model=XY(L,N)
 
 
-eps=Energycomputer(N,seed).uniformrandom_e(W)
+eps=Energycomputer(N,seed).constant_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-gamma=Gammacomputer(N).central_g(G)
+#gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[2,3,4])
+gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-#rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
-rho0=model.generate_random_density(pure=True, seed=None) # 5, 6, 10, 11
+states,rho0=model.generate_coherent_density(alpha=1*np.pi/2.1)
+#states, rho0=model.generate_random_density(pure=True, seed=None) # 5, 6, 10, 11
 
-#print(rho0)
+print(states)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
@@ -74,7 +75,7 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=1000
+t_1=20
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000 )
 
