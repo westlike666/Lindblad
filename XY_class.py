@@ -65,6 +65,19 @@ class XY():
         self.random_rho=rho
         return state_list,self.random_rho    
     
+    def generate_up(self, up_sites):
+        L=self.L
+        N=self.N
+        
+        state_list=[]
+        
+        for i in range(N):
+            state=basis(L,1)
+            state_list.append(state)
+        for i in up_sites:    
+            state_list[i]=basis(L,0)
+        rho=tensor(state_list)        
+        return state_list, rho
     
     def generate_coherent_density(self, alpha=np.pi/4, pure=True):   
         
