@@ -22,6 +22,7 @@ from numpy.random import default_rng
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
 save=True
+
 if save:
     path='results\\'+utils.get_run_time()
     os.mkdir(path)
@@ -56,7 +57,7 @@ H=model.get_Hamiltonian2(eps, J, U)
 #states,rho0=model.generate_coherent_density(alpha=1*np.pi/4)
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
 #states,rho0=model.generate_random_ket()
-rng=default_rng(seed=None)
+rng=default_rng(seed=1)
 up_sites=rng.choice(N, N//2, replace=False)
 states, rho0=model.generate_up(up_sites)
 
@@ -160,6 +161,7 @@ if save:
     var_to_save={'N':N,
                  'J':J,
                  'U':U,
+                 'eps':eps,
                  'gamma':gamma,
                  'states': states,
                  'result1':result1,
