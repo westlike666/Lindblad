@@ -21,7 +21,7 @@ from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
-save=True
+save=False
 
 if save:
     path='results\\'+utils.get_run_time()
