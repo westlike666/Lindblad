@@ -21,13 +21,13 @@ from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
-save=False
+save=True
 if save:
     path='results\\'+utils.get_run_time()
     os.mkdir(path)
 
 L=2
-N=9
+N=7
 
 W=1
 t=0.15
@@ -58,7 +58,7 @@ H=model.get_Hamiltonian2(eps, J, U)
 #states,rho0=model.generate_random_ket()
 rng=default_rng(seed=None)
 up_sites=rng.choice(N, N//2, replace=False)
-states, rho0=model.generate_up([1,3,5,7])
+states, rho0=model.generate_up(up_sites)
 
 print(states)
 print(up_sites)
@@ -133,28 +133,43 @@ y2=expect(e_ops, result2.states)
 
 
 def plot_evolution(show_type='z', show_ind=0):
+
     t_total=np.append(result1.times, result2.times)
     y_total=np.append(y1[index[show_type][show_ind]].real,y2[index[show_type][show_ind]].real)
-
     plt.figure(show_ind)
     #plt.subplot(211)
     plt.plot(t_total, y_total, label="$Re <S^{}_{}>$".format(show_type, show_ind))
     plt.ylabel("site {}".format(show_ind))
     plt.axhline(y=-0.5, color='grey', linestyle='--')
-    plt.legend() 
+    plt.legend()
+    if save:
+        plt.savefig(path+"\\site {}.pdf".format(show_ind))
     # plt.subplot(212)
     # plt.plot(t_total, result1.y[index[show_type][show_ind]].imag, label='1st-order approx') 
     # plt.plot(t_total, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad')
     # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
     # plt.legend()
     plt.xlabel('t')
-    plt.suptitle('XY model L=%d, N=%d  eps=%.2f  t=%.2f W  g=%.1f W from one end' % (L,N, eps[show_ind],t,G))
+    plt.suptitle('XY model L=%d, N=%d  eps=%.2f  t=%.2f W  g=%.1f W' % (L,N, eps[show_ind],t,G))
 for show_ind in range(N):
     plot_evolution('+',show_ind)
     plot_evolution('z', show_ind)
      
     
-
+if save:
+    var_to_save={'N':N,
+                 'J':J,
+                 'U':U,
+                 'gamma':gamma,
+                 'states': states,
+                 'result1':result1,
+                 'result2':result2,
+                 'y1':y1,
+                 'y2':y2,
+                 'index': index,
+                 'up_sites':up_sites
+                 }
+    utils.store_vars(path, var_to_save)
 
 
 
