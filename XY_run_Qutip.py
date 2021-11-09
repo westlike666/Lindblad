@@ -14,21 +14,21 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 import time 
 from datetime import datetime 
-from tqdm import tqdm
+#from tqdm import tqdm
 from qutip import*
 import random
 from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
-save=False
+save=True
 
 if save:
-    path='results\\'+utils.get_run_time()
+    path='results/'+utils.get_run_time()
     os.mkdir(path)
 
 L=2
-N=7
+N=8
 
 W=1
 t=0.15
@@ -144,7 +144,7 @@ def plot_evolution(show_type='z', show_ind=0):
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend()
     if save:
-        plt.savefig(path+"\\site {}.pdf".format(show_ind))
+        plt.savefig(path+"/site {}.pdf".format(show_ind))
     # plt.subplot(212)
     # plt.plot(t_total, result1.y[index[show_type][show_ind]].imag, label='1st-order approx') 
     # plt.plot(t_total, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad')
