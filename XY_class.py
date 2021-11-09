@@ -72,10 +72,10 @@ class XY():
         state_list=[]
         
         for i in range(N):
-            state=basis(L,1)
+            state=fock_dm(L,1)
             state_list.append(state)
         for i in up_sites:    
-            state_list[i]=basis(L,0)
+            state_list[i]=fock_dm(L,0)
         rho=tensor(state_list)        
         return state_list, rho
     

@@ -17,7 +17,7 @@ from qutip import*
 import random
 from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
-
+from numpy.random import default_rng
 
 L=2
 N=5
@@ -39,15 +39,18 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).constant_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-#gamma=Gammacomputer(N).central_g(G)
+gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[2,3,4])
-gamma=Gammacomputer(N).constant_g(G)
+#gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
-
-states,rho0=model.generate_coherent_density(alpha=1*np.pi/2.1)
+#states,rho0=model.generate_coherent_density(alpha=1*np.pi/2.1)
 #states, rho0=model.generate_random_density(pure=True, seed=None) # 5, 6, 10, 11
+
+rng=default_rng(seed=1)
+up_sites=rng.choice(N, N//2, replace=False)
+states, rho0=model.generate_up(up_sites)
 
 print(states)
 Sz=model.Sz
@@ -75,7 +78,7 @@ fun=ode_funs.fun_1st
 index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=20
+t_1=500
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000 )
 
@@ -116,7 +119,7 @@ result2=mesolve(H, rho0, times, c_ops, e_ops, progress_bar=True, options=None)
 
 
 
-#result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops=e_ops)  
+result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops=e_ops)  
 
 # plt.plot(result3.t, expect_value[index[show_type][show_ind]], label='solve_ivp solved Lindblad') 
 
@@ -135,7 +138,7 @@ def plot_evolution(show_type='z', show_ind=0):
     #plt.subplot(211)
     plt.plot(time, result1.y[index[show_type][show_ind]], label='1st-order approx') 
     plt.plot(time, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad')
-    #plt.plot(result3.t, expect_value[index[show_type][show_ind]], '--' ,label='solve_ivp solved Lindblad') 
+    plt.plot(result3.t, expect_value[index[show_type][show_ind]], '--' ,label='solve_ivp solved Lindblad') 
     plt.ylabel("$Re <S^{}_{}>$".format(show_type, show_ind))
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend() 
