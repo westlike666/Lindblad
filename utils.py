@@ -11,10 +11,10 @@ import pickle
 
 def get_run_time():
     currentDT = datetime.datetime.now()
-    return "%d-%d-%d-%d_%d_%d" % (currentDT.year, currentDT.month, currentDT.day, currentDT.hour, currentDT.minute, currentDT.second)
+    return "%d-%d-%d_%.2d_%.2d_%.2d" % (currentDT.year, currentDT.month, currentDT.day, currentDT.hour, currentDT.minute, currentDT.second)
 
 def store_vars(path, obj):
-    f=open(path+'\\store.p', 'wb')
+    f=open(path+'/store.p', 'wb')
     pickle.dump(obj, f)
     f.close()
     
