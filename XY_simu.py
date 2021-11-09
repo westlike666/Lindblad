@@ -18,25 +18,35 @@ import random
 from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 from numpy.random import default_rng
+import utils 
+import os
+
 
 L=2
 N=5
 
 W=1
-t=1
+t=0.15
 u=0
 
-G=0.1
+G=1
 seed=None
 
 show_type='z'
 #show_ind=random.randrange(N)
 show_ind=0
 
+save=True
+
+if save:
+    path='results/'+utils.get_run_time()
+    os.mkdir(path)
+
+
 model=XY(L,N)
 
 
-eps=Energycomputer(N,seed).constant_e(W)
+eps=Energycomputer(N,seed).uniformrandom_e()
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
@@ -52,7 +62,7 @@ rng=default_rng(seed=1)
 up_sites=rng.choice(N, N//2, replace=False)
 states, rho0=model.generate_up(up_sites)
 
-print(states)
+print(up_sites)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
@@ -149,9 +159,12 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.legend()
     plt.xlabel('t')
     plt.suptitle('XY model L=%d, N=%d  t=%.1f W  g=%.1f W for ' % (L,N,t,G)+Diss)
-
+    if save:
+        plt.savefig(path+"/site {}".format(show_ind)+show_type+".pdf")
+        
 for show_ind in range(N):
     plot_evolution('+',show_ind)
+
     plot_evolution('z', show_ind)
 
 
