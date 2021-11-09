@@ -13,7 +13,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 #import scipy
 from qutip import*
-from tqdm import tqdm
+#from tqdm import tqdm
 import copy 
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
