@@ -133,12 +133,12 @@ result3, expect_value=Lindblad_solve(H, rho0, t_span, t_eval, c_ops=c_ops, e_ops
 
 # plt.plot(result3.t, expect_value[index[show_type][show_ind]], label='solve_ivp solved Lindblad') 
 
-z1=result1.y[index[show_type][show_ind]]
-z2=result2.expect[index[show_type][show_ind]]
+# z1=result1.y[index[show_type][show_ind]]
+# z2=result2.expect[index[show_type][show_ind]]
 
-err=np.linalg.norm(z1-z2)/np.linalg.norm(z2)
+# err=np.linalg.norm(z1-z2)/np.linalg.norm(z2)
 
-print("--- error for N={} sites is: {} ---\n" .format(N, err))
+# print("--- error for N={} sites is: {} ---\n" .format(N, err))
 
 
 def plot_evolution(show_type='z', show_ind=0):
@@ -146,9 +146,9 @@ def plot_evolution(show_type='z', show_ind=0):
     time=result1.t
     plt.figure()
     #plt.subplot(211)
-    plt.plot(time, result1.y[index[show_type][show_ind]], label='1st-order approx') 
-    plt.plot(time, result2.expect[index[show_type][show_ind]], label='Qutip solved Lindblad')
-    plt.plot(result3.t, expect_value[index[show_type][show_ind]], '--' ,label='solve_ivp solved Lindblad') 
+    plt.plot(time, result1.y[index[show_type][show_ind]].real, label='1st-order approx') 
+    plt.plot(time, result2.expect[index[show_type][show_ind]].real, label='Qutip solved Lindblad')
+    plt.plot(result3.t, np.array(expect_value[index[show_type][show_ind]]).real, '--', label='solve_ivp solved Lindblad') 
     plt.ylabel("$Re <S^{}_{}>$".format(show_type, show_ind))
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend() 
