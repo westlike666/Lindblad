@@ -21,14 +21,14 @@ from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
-save=True
+save=False
 
 if save:
     path='results/'+utils.get_run_time()
     os.mkdir(path)
 
 L=2
-N=8
+N=7
 
 W=1
 t=0.15
@@ -36,7 +36,7 @@ u=0
 
 G=1
 
-seed=None
+seed=1
 
 show_type='z'
 #show_ind=random.randrange(N)
@@ -61,7 +61,7 @@ rng=default_rng(seed=1)
 up_sites=rng.choice(N, N//2, replace=False)
 states, rho0=model.generate_up(up_sites)
 
-print(states)
+#print(states)
 print(up_sites)
 print(eps)
 
@@ -164,8 +164,6 @@ if save:
                  'eps':eps,
                  'gamma':gamma,
                  'states': states,
-                 'result1':result1,
-                 'result2':result2,
                  'y1':y1,
                  'y2':y2,
                  'index': index,
