@@ -27,6 +27,9 @@ index=data['index']
 check conservation
 """
 
+#eps=0*eps+1
+
+
 E1=[eps[i]*y1[i] for i in index['z']]
 E2=[eps[i]*y2[i] for i in index['z']]
 
@@ -44,21 +47,33 @@ for t in range(1000):
     for i in range(N):
         z1[t] += E1[i][t]
         z2[t] += E2[i][t]
-        
-plt.plot(z1)
-plt.plot(z2)        
+
+times=np.append(np.linspace(0, 100,1000), np.linspace(100, 500,1000))
+z=np.append(z1,z2)
+plt.plot(times,z)
+plt.axvline(x=100, color='grey', linestyle='--')
+plt.title('$\sum_i <S_i^z>$')
+#plt.title('$\sum_i \epsilon_i<S_i^z>$')        
+#plt.plot(z1)
+#plt.plot(z2)        
 
 """
 check level spacing
 """
 
-l1=[eps[i]*y1[i] for i in index['z']]
-l2=[eps[i]*y2[i] for i in index['z']]
 
+s1=[]
+for t in range(1000):
+    l1=[]
+    for i in range(N):
+        l1.append(E1[i][t])
+    l1.sort()
+    s1.append(np.diff(l1))
+    
+s1=np.ndarray.flatten(np.array(s1))
 
-
-
-
+plt.figure()
+plt.hist(s1, bins=100)
 
 
 
