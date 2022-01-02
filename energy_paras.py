@@ -34,10 +34,10 @@ class Energycomputer():
         Returns
         -------
         energies : array
-            onsite energies chosen from a uniform random distribution between -W/2 and W/2
+            onsite energies chosen from a uniform random distribution between 0 and W
         """
         #np.random.seed(seed)
-        energies = self.rng.uniform(-W/2, W/2, self.N)
+        energies = self.rng.uniform(0, W, self.N)
         return energies
     
 
