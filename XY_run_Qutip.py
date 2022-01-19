@@ -5,6 +5,7 @@ Created on Wed Oct 20 17:53:05 2021
 @author: westl
 """
 
+import scipy
 import numpy as np
 import os
 import utils
@@ -28,8 +29,7 @@ if save:
     os.mkdir(path)
 
 L=2
-N=7
-
+N=10
 W=1
 t=0.15
 u=0
@@ -51,6 +51,7 @@ U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[0,6])
+#gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
@@ -116,14 +117,21 @@ else:
     
 c_ops=[]
 
-for i in range(N):
-    c_ops.append(np.sqrt(gamma[i])*diss[i])
+# for i in range(N):
+#     c_ops.append(np.sqrt(gamma[i])*diss[i])
     
 t_2=500
 t_span=(t_1, t_2)
-times2=np.linspace(t_1, t_2, 1000)    
+times2=np.linspace(t_1, t_2, 1000)
 
-result2=mesolve(H, rho1, times2, c_ops, progress_bar=True)
+for i in range(N):
+    c_ops.append(np.sqrt(gamma[i])*diss[i]) # constant c_ops
+
+#    c_ops.append([np.sqrt(gamma[i])*diss[i],np.sin(times2-t_1)/10]) # periodic c_ops
+ 
+    
+
+result2=mesolve(H, rho1, times2, c_ops, args={},progress_bar=True)
 y2=expect(e_ops, result2.states) 
 
 
@@ -173,6 +181,7 @@ if save:
 
 
 
-    
+L=liouvillian(H, c_ops, data_only=True)
+scipy.sparse.linalg.eigs(L)    
     
     
