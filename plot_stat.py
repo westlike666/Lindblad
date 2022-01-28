@@ -23,9 +23,9 @@ from numpy.random import default_rng
 #path='results/2021-12-2_15_07_58/'
 #path='results/2021-12-6_15_39_39/'
 #path='results/2022-1-1_19_48_53/'
-path='results/2022-1-11_17_51_04/'
+#path='results/2022-1-11_17_51_04/'
 #path='results/2022-1-13_20_20_11/'
-#path='results/2022-1-15_21_13_50/'
+path='results/2022-1-15_21_13_50/'
 
 data=utils.load_vars(path+'store.p')
 
@@ -108,8 +108,15 @@ s2=np.ndarray.flatten(np.array(s2))
 
 
 plt.figure()
-plt.hist(s1, bins=500,alpha=1,density=True)
-plt.hist(s2, bins=500,alpha=0,density=True)
+plt.hist(s1, bins=500,alpha=0.6,density=True)
+plt.hist(s2, bins=500,alpha=0.6,density=True)
+
+if not energy:
+    plt.title('$\sum_i <S_i^z>$')
+    plt.savefig(path+'hist_spin.png')
+else:    
+    plt.title('$\sum_i \epsilon_i<S_i^z>$')
+    plt.savefig(path+'hist_energy.png')
 
 
 if not energy:
@@ -119,9 +126,9 @@ else:
 
 #plt.ylim((0,2500))
 
-plt.figure()
-plt.hist(s1, bins=500,alpha=0,density=True)
-plt.hist(s2, bins=500,alpha=1,density=True)
+# plt.figure()
+# plt.hist(s1, bins=500,alpha=0,density=True)
+# plt.hist(s2, bins=500,alpha=1,density=True)
 
 
 
