@@ -21,6 +21,17 @@ import random
 from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
+import argparse
+
+
+parser = argparse.ArgumentParser(description='Run the model as set up')
+parser.add_argument('--W', type=int, nargs='?',
+                      help='The integer degree of disorder', action='store')
+parser.add_argument('--t', type=int, nargs='?',
+                      help='The J bar', action='store')
+
+args=parser.parse_args()
+
 
 save=False
 
@@ -30,8 +41,8 @@ if save:
 
 L=2
 N=5
-W=1
-t=0.15
+W=args.W
+t=args.t
 u=0
 
 G=1
