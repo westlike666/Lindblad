@@ -48,8 +48,8 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-gamma=Gammacomputer(N).central_g(G)
-#gamma=Gammacomputer(N).boundary_g(G)
+#gamma=Gammacomputer(N).central_g(G)
+gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[0,6])
 #gamma=Gammacomputer(N).constant_g(G)
 
@@ -151,8 +151,6 @@ def plot_evolution(show_type='z', show_ind=0):
     plt.ylabel("site {}".format(show_ind))
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend()
-    if save:
-        plt.savefig(path+"/site {}.pdf".format(show_ind))
     # plt.subplot(212)
     # plt.plot(t_total, result1.y[index[show_type][show_ind]].imag, label='1st-order approx') 
     # plt.plot(t_total, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad')
@@ -160,6 +158,8 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.legend()
     plt.xlabel('t')
     plt.suptitle('XY model L=%d, N=%d  eps=%.2f  t=%.2f W  g=%.1f W' % (L,N, eps[show_ind],t,G))
+    if save:
+        plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
     plot_evolution('+',show_ind)
     plot_evolution('z', show_ind)
