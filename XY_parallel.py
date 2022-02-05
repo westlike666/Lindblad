@@ -22,33 +22,49 @@ from numpy.random import default_rng
 #from Lindblad_solver import Lindblad_solve
 from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 import argparse
-
+import sys
 
 parser = argparse.ArgumentParser(description='Run the model as set up')
-parser.add_argument('--W', type=int, nargs='?',
-                      help='The integer degree of disorder', action='store')
-parser.add_argument('--t', type=int, nargs='?',
+
+
+parser.add_argument('--N', type=int, nargs='?',
+                      help='Number of site', action='store')
+
+parser.add_argument('--W', type=float, nargs='?',
+                      help='The degree of disorder', action='store')
+parser.add_argument('--t', type=float, nargs='?',
                       help='The J bar', action='store')
+parser.add_argument('--G', type=float, nargs='?',
+                      help='dissipation rate', action='store')
+
+parser.add_argument('--seed', type=int, nargs='?',
+                      help='seed for random generator', action='store', default=None)
+
+parser.add_argument('--save', type=bool, nargs='?',
+                        help = 'Whether to save results to file',
+                        action='store', default=True)
 
 args=parser.parse_args()
 
 
-save=False
-
-if save:
-    path='results/'+utils.get_run_time()
-    os.mkdir(path)
+save=args.save
 
 L=2
-N=5
+u=0
+N=args.N
 W=args.W
 t=args.t
-u=0
+G=args.G
+seed=args.seed
 
-G=1
+name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' g='+ str(G) +' seed=' +str(seed)
 
-seed=1
+if save:
+#    path='results/'+utils.get_run_time()
+    path='results/'+name
 
+    os.mkdir(path)
+    
 show_type='z'
 #show_ind=random.randrange(N)
 show_ind=0
@@ -69,8 +85,10 @@ H=model.get_Hamiltonian2(eps, J, U)
 #states,rho0=model.generate_coherent_density(alpha=1*np.pi/4)
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
 #states,rho0=model.generate_random_ket()
-rng=default_rng(seed=1)
-up_sites=rng.choice(N, N//2, replace=False)
+rng=default_rng(seed=seed)
+#up_sites=rng.choice(N, N//2, replace=False)
+up_sites=[i for i in range(0,N,2)]
+
 states, rho0=model.generate_up(up_sites)
 
 #print(states)
@@ -158,8 +176,9 @@ def plot_evolution(show_type='z', show_ind=0):
     y_total=np.append(y1[index[show_type][show_ind]].real,y2[index[show_type][show_ind]].real)
     plt.figure(show_ind)
     #plt.subplot(211)
-    plt.plot(t_total, y_total, label="$Re <S^{}_{}>$".format(show_type, show_ind))
+    plt.plot(t_total*t, y_total, label="$Re <S^{}_{}>$".format(show_type, show_ind))
     plt.ylabel("site {}".format(show_ind))
+    plt.ylim(-0.5,0.5)
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend()
     # plt.subplot(212)
@@ -167,8 +186,8 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.plot(t_total, result2.expect[index[show_type][show_ind]].imag, label='Qutip solved Lindblad')
     # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
     # plt.legend()
-    plt.xlabel('t')
-    plt.suptitle('XY model L=%d, N=%d  eps=%.2f  t=%.2f W  g=%.1f W' % (L,N, eps[show_ind],t,G))
+    plt.xlabel('t * $\overline{J}$')
+    plt.suptitle('XY model, N=%d, W=%d,  eps=%.2f,  $\overline{J}$=%.2f  g=%.1f' % (N,W, eps[show_ind],t,G))
     if save:
         plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
@@ -185,6 +204,8 @@ if save:
                  'states': states,
                  'y1':y1,
                  'y2':y2,
+                 't1':result1.times,
+                 't2':result2.times ,                 
                  'index': index,
                  'up_sites':up_sites
                  }
