@@ -21,14 +21,14 @@ G=0.5
 #seed=1
 
 save=True
-path0='results/boundary/'
+path0='results/center/'
 
 
 
 for i in range(N):
     Sz_total=[]
     Sp_total=[]
-    for seed in range(1,17):          
+    for seed in range(5,17):          
         name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' g='+ str(G) +' seed=' +str(seed)
         path=path0 +name 
         data=utils.load_vars(path+'/store.p')
