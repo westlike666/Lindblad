@@ -87,7 +87,7 @@ class XY():
         
         state_list=[]
         state=coherent(L, alpha)
-        print(state)
+        #print(state)
         for i in (range(N)):
             state_list.append(state)     
         rho=tensor(state_list) 

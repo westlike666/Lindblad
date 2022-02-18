@@ -16,6 +16,7 @@ from tqdm import tqdm
 from qutip import*
 import random
 #from Lindblad_solver import Lindblad_solve
+from energy_paras import Energycomputer, Jcomputer, Ucomputer, Gammacomputer
 
 
 
@@ -30,17 +31,19 @@ show_ind=(0)
 model=XY(L,N)
 
 H=model.get_Hamiltonian(W=1, t=0.1, u=0)
-#rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=1)
-#print(rho0)
+#states,rho0=model.generate_coherent_density()
+#rho0=model.generate_random_density(seed=1)
+up_sites=[i for i in range(0,N,2)]
+states, rho0=model.generate_up(up_sites)#print(rho0)
 Sz=model.Sz
 Sp=model.Sp
 Sm=model.Sm
 SpSm=model.generate_SpSm()
 #G=0.0000000000000001
-G=0.1
+G=1
 
-gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+#gamma=model.generate_gamma(G) # if gamma is too large will cause too stiff ode, thus need to increase number of steps correspondingly.
+gamma=Gammacomputer(N).central_g(G)
 
 eps=model.eps
 J=model.J
@@ -62,17 +65,18 @@ ode_funs=ode_funs(N, eps, J, U, gamma, Diss=Diss) # chose the jump opperator for
 
 fun=ode_funs.fun_1st
 
-index=ode_funs.flat_index(single_ops=['z'], double_ops=[], index={}) 
+index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
 t_1=100
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000 )
 
+with tqdm(total=100, unit="‰") as pbar:
 
-#result1=solve_ivp(fun, t_span=t_span, y0=y1, t_eval=t_eval, args=[index])  
+    result1=solve_ivp(fun, t_span=t_span, y0=y1, t_eval=t_eval, args=[index, pbar, [t_0, (t_1-t_0)/100]])  
 
-#plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
+plt.plot(result1.t, result1.y[index[show_type][show_ind]], label='1st-order approx')
 
 
 
@@ -131,4 +135,5 @@ plt.plot(result3.times, result3.expect[index[show_type][show_ind]], label='Qutip
 plt.title('XY model L=%d, N=%d  gamma=%dW for ' % (L,N,G)+Diss)
 plt.xlabel('t')
 plt.ylabel("$<S^{}_{}>$".format(show_type, show_ind))
+plt.ylim(-0.6, 0.6)
 plt.legend()  

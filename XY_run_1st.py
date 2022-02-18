@@ -25,7 +25,7 @@ W=1
 t=1
 u=0
 G1=0.0
-G2=0.1
+G2=1
 
 t_0=0
 t_1=100
@@ -34,7 +34,7 @@ steps=1000
 t_2=200
 
 
-seed=1
+seed=None
 
 show_type='z' 
 show_ind=random.randrange(N)
@@ -50,8 +50,10 @@ gamma=Gammacomputer(N).constant_g(G1)
 H=model.get_Hamiltonian2(eps, J, U)
 
 #print(model.eps, model.J, model.U)
-rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
-#rho0=model.generate_random_density(seed=None)
+#states,rho0=model.generate_coherent_density(alpha=1*np.pi/2.5)
+states, rho0=model.generate_random_density(seed=None)
+#up_sites=[i for i in range(0,N,2)]
+#states, rho0=model.generate_up(up_sites)
 #print(rho0)
 Sz=model.Sz
 Sp=model.Sp
@@ -69,6 +71,7 @@ sloving by semi-classical 1st order: <S1*S2>=<S1>*<S2> for the first stage with 
 """
 
 e_ops=Sz+Sp
+
 
 y1=expect(e_ops, rho0)
    
