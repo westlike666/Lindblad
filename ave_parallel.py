@@ -17,7 +17,7 @@ Ave=[]
 N=11
 W=10.0
 t=1.0
-G=0.5
+G=1.0
 #seed=1
 
 save=True
@@ -30,20 +30,22 @@ for i in range(N):
     Sp_total=[]
     for seed in range(5,21):          
         name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' g='+ str(G) +' seed=' +str(seed)
-        path=path0 +name 
-        data=utils.load_vars(path+'/store.p')
+        path=path0 +name +'/store.p'
+        if os.path.exists(path):
+            data=utils.load_vars(path)
     
-        eps=data['eps']
-        y1=data['y1']
-        y2=data['y2']
-        index=data['index'] 
-        t1=data['t1']
-        t2=data['t2']
-        
-#        S_z=[eps[i]*y1[i] for i in index['z']]
-        t_total=np.append(t1, t2)
-        Sz_total.append(np.append(y1[index['z'][i]], y2[index['z'][i]]))
-        Sp_total.append(np.append(y1[index['+'][i]], y2[index['+'][i]]))        
+            eps=data['eps']
+            y1=data['y1']
+            y2=data['y2']
+            index=data['index'] 
+            t1=data['t1']
+            t2=data['t2']
+            
+    #        S_z=[eps[i]*y1[i] for i in index['z']]
+            t_total=np.append(t1, t2)
+            Sz_total.append(np.append(y1[index['z'][i]], y2[index['z'][i]]))
+            Sp_total.append(np.append(y1[index['+'][i]], y2[index['+'][i]]))
+            
     Sz_ave=(np.mean(Sz_total,0)) 
     Sp_ave=(np.mean(Sp_total,0))
     plt.figure()
