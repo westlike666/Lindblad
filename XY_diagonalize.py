@@ -29,14 +29,14 @@ if save:
     os.mkdir(path)
 
 L=2
-N=10
+N=2
 W=1
 t=0.15
 u=0
 
 G=1
 
-seed=1
+seed=None
 
 show_type='z'
 #show_ind=random.randrange(N)
@@ -48,12 +48,16 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-#gamma=Gammacomputer(N).central_g(G)
-gamma=Gammacomputer(N).boundary_g(G)
+gamma=Gammacomputer(N).central_g(G)
+#gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[0,6])
 #gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
+
+
+
+
 
 #states,rho0=model.generate_coherent_density(alpha=1*np.pi/4)
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
@@ -73,6 +77,11 @@ Sm=model.Sm
 
 
 
+
+
+
+
+#%%
 
 
 """
