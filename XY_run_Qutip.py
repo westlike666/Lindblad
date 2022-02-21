@@ -29,12 +29,12 @@ if save:
     os.mkdir(path)
 
 L=2
-N=10
-W=1
-t=0.15
+N=7
+W=0
+t=1
 u=0
 
-G=1
+G=0.5
 
 seed=1
 
@@ -59,7 +59,8 @@ H=model.get_Hamiltonian2(eps, J, U)
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
 #states,rho0=model.generate_random_ket()
 rng=default_rng(seed=1)
-up_sites=rng.choice(N, N//2, replace=False)
+#up_sites=rng.choice(N, N//2, replace=False)
+up_sites=[i for i in range(0,N,2)]
 states, rho0=model.generate_up(up_sites)
 
 #print(states)

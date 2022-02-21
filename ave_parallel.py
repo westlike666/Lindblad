@@ -15,9 +15,9 @@ Data = []
 Ave = []
 
 N = 11
-W = 0.0
+W = 10.0
 t = 1.0
-G = 0.5
+G = 5.0
 # seed=1
 
 save = True
