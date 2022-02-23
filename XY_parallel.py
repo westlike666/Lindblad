@@ -37,12 +37,18 @@ parser.add_argument('--t', type=float, nargs='?',
 parser.add_argument('--G', type=float, nargs='?',
                       help='dissipation rate', action='store')
 
+parser.add_argument('--bc', type=str, nargs='?',
+                        help = 'type of start decaying: center/boundary',
+                        action='store', default="center")
+
 parser.add_argument('--seed', type=int, nargs='?',
                       help='seed for random generator', action='store', default=None)
 
 parser.add_argument('--save', type=bool, nargs='?',
                         help = 'Whether to save results to file',
-                        action='store', default=True)
+                        action='store', default=False)
+
+
 
 args=parser.parse_args()
 
@@ -55,13 +61,14 @@ N=args.N
 W=args.W
 t=args.t
 G=args.G
+bc=args.bc
 seed=args.seed
 
 name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' g='+ str(G) +' seed=' +str(seed)
 
 if save:
 #    path='results/'+utils.get_run_time()
-    path='results/'+name
+    path='results/'+bc+'/'+name
 
     os.mkdir(path)
     
@@ -75,8 +82,11 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-gamma=Gammacomputer(N).central_g(G)
-#gamma=Gammacomputer(N).boundary_g(G)
+if bc=='center':
+    gamma=Gammacomputer(N).central_g(G)
+elif bc=='boundary':
+    gamma=Gammacomputer(N).boundary_g(G)
+
 #gamma=Gammacomputer(N).site_g(G,[0,6])
 #gamma=Gammacomputer(N).constant_g(G)
 
@@ -187,7 +197,7 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
     # plt.legend()
     plt.xlabel('t * $\overline{J}$')
-    plt.suptitle('XY model, N=%d, W=%d,  eps=%.2f,  $\overline{J}$=%.2f  g=%.1f' % (N,W, eps[show_ind],t,G))
+    plt.suptitle('XY model, N=%d, W=%d,  eps=%.2f,  $\overline{J}$=%.2f   $\gamma$=%.1f' % (N,W, eps[show_ind],t,gamma[show_ind]))
     if save:
         plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
