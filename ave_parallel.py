@@ -17,11 +17,11 @@ Ave = []
 N = 11
 W = 10.0
 t = 1.0
-G = 10.0
+G = 5.0
 # seed=1
 
 save = True
-path0 = 'results/center/'
+path0 = 'results/boundary/'
 
 
 for i in range(N):

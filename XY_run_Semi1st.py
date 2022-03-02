@@ -29,15 +29,14 @@ if save:
     os.mkdir(path)
 
 L=2
-N=5
-W=1
-t=0.1
+N=7
+W=10
+t=1
 u=0
 
 G=1
 
-seed=1
-
+seed=None
 show_type='z'
 #show_ind=random.randrange(N)
 show_ind=0
@@ -51,7 +50,7 @@ U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 gamma=Gammacomputer(N).central_g(G)
 #gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[0,6])
-gamma=Gammacomputer(N).constant_g(G)
+#gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
@@ -173,7 +172,7 @@ fun=ode_class.fun_1st
 with tqdm(total=100, unit="‰") as pbar:
     result2_semi=solve_ivp(fun, t_span=t_span, y0=y1_semi[:,-1], t_eval=times2, args=[index, pbar, [t_1, (t_2-t_1)/100]])  
 
-y2_semi=result1_semi['y']
+y2_semi=result2_semi['y']
 
 
 
@@ -190,10 +189,12 @@ y2_semi=result1_semi['y']
 def plot_evolution(show_type='z', show_ind=0):
 
     t_total=np.append(result1.times, result2.times)
-    y_total=np.append(y1_semi[index[show_type][show_ind]].real,y2_semi[index[show_type][show_ind]].real)
+    y_total=np.append(y1[index[show_type][show_ind]].real,y2[index[show_type][show_ind]].real)   
+    y_total_semi=np.append(y1_semi[index[show_type][show_ind]].real,y2_semi[index[show_type][show_ind]].real)
     plt.figure(show_ind)
     #plt.subplot(211)
-    plt.plot(t_total, y_total, label="$Re <S^{}_{}>$".format(show_type, show_ind))
+    plt.plot(t_total, y_total, label="$Qutip Re <S^{}_{}>$".format(show_type, show_ind))
+    plt.plot(t_total, y_total_semi, label="$semi-class Re <S^{}_{}>$".format(show_type, show_ind))
     plt.ylabel("site {}".format(show_ind))
     plt.ylim(-0.6,0.6)
     plt.axhline(y=-0.5, color='grey', linestyle='--')
@@ -208,7 +209,7 @@ def plot_evolution(show_type='z', show_ind=0):
     if save:
         plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
-    plot_evolution('+',show_ind)
+#    plot_evolution('+',show_ind)
     plot_evolution('z', show_ind)
      
     

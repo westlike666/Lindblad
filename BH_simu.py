@@ -14,8 +14,8 @@ from datetime import datetime
 from tqdm import tqdm
 from qutip import*
 
-N=3# max number excitation
-L=2# number of site   
+N=2# max number excitation
+L=4# number of site   
 
 """
 for two-level system, the maxmum site the computer can handle for cnstructing initial matrix is about 20 
@@ -25,11 +25,12 @@ for 1 billion entries it takes 10GB memory. so do not exceed 10^5 sites when usi
 """ 
 J=1#hopping 
 w=4+2*J #detunning 
+
 U=0# onsite repulsion 
 A=1 #external driving 
-gamma=1#losse
+gamma=0.0#losse
 
-pick=0 # pick the i th val
+pick=14 # pick the i th val
 
 """
 First using semi-classical approximation. 
@@ -38,7 +39,9 @@ start_time=datetime.now()
 
 model=Bose_Hubbard(N,L,w,U,J,A,gamma)
 ind_a, ind_adag_a, ind_a_a = model.get_index()
-rho0=model.generate_random_density() # generate a random initial density every time called, stored as self.random_rho
+#rho0=model.generate_random_density() # generate a random initial density every time called, stored as self.random_rho
+rho0=model.generate_all_up() # generate a random initial density every time called, stored as self.random_rho
+
 y0=model.get_random_value()
 #y0=np.random.randn(2*L**2+L)+(np.random.randn(2*L**2+L))*1j
 
@@ -93,7 +96,7 @@ def f(t,Y, pbar, state):
 
 
 t_0=0
-t_1=10
+t_1=100
 t_span=(t_0,t_1)
 t_eval=np.linspace(t_0, t_1, 1000) 
 

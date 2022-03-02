@@ -81,6 +81,20 @@ class Bose_Hubbard():
         
         self.random_rho=rho
         return self.random_rho
+    
+    def generate_all_up(self):      
+        N=self.N
+        L=self.L
+        
+        state_list=[]
+        state=fock(N,1)
+        for i in (range(L)):
+            state_list.append(state)     
+        rho=tensor(state_list) 
+        
+        self.random_rho=rho
+        return self.random_rho
+    
 
             
     
