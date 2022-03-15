@@ -34,6 +34,10 @@ parser.add_argument('--W', type=float, nargs='?',
                       help='The degree of disorder', action='store')
 parser.add_argument('--t', type=float, nargs='?',
                       help='The J bar', action='store')
+
+parser.add_argument('--u', type=float, nargs='?',
+                      help='The u term', action='store')
+
 parser.add_argument('--G', type=float, nargs='?',
                       help='dissipation rate', action='store')
 
@@ -56,15 +60,16 @@ args=parser.parse_args()
 save=args.save
 
 L=2
-u=0
+
 N=args.N
 W=args.W
 t=args.t
+u=args.u
 G=args.G
 bc=args.bc
 seed=args.seed
 
-name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' g='+ str(G) +' seed=' +str(seed)
+name='N='+str(N)+' W='+ str(W)+' t='+str(t) + ' u='+ str(u) + ' g='+ str(G) +' seed=' +str(seed)
 
 if save:
 #    path='results/'+utils.get_run_time()
@@ -81,7 +86,7 @@ model=XY(L,N)
 
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
-U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
+U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).constant_u(u)
 if bc=='center':
     gamma=Gammacomputer(N).central_g(G)
 elif bc=='boundary':
@@ -197,7 +202,7 @@ def plot_evolution(show_type='z', show_ind=0):
     # plt.ylabel("$Im <S^{}_{}>$".format(show_type, show_ind))
     # plt.legend()
     plt.xlabel('t * $\overline{J}$')
-    plt.suptitle('XY model, N=%d, W=%d,  eps=%.2f,  $\overline{J}$=%.2f   $\gamma$=%.1f' % (N,W, eps[show_ind],t,gamma[show_ind]))
+    plt.suptitle('XY model, N=%d, W=%d,  eps=%.2f,  $\overline{J}$=%.2f  u=%d  $\gamma$=%.1f' % (N,W, eps[show_ind],t,u,gamma[show_ind]))
     if save:
         plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
