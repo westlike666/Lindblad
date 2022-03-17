@@ -184,7 +184,7 @@ def coeff_p(t, args):
 
 
 for i in range(N):
-#    c_ops.append(np.sqrt(gamma[i])*diss[i]) # constant c_ops
+ #   c_ops.append(np.sqrt(gamma[i])*diss[i]) # constant c_ops
 
     c_ops.append([[np.sqrt(gamma[i])*Sm[i],coeff_m],[np.sqrt(gamma[i])*Sp[i],coeff_p]]) # periodic c_ops
  
