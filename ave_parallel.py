@@ -20,8 +20,8 @@ t = 1.0
 G = 1.0
 # seed=1
 
-save = False
-path0 = 'results/center/'
+save = True
+path0 = 'results/boundary/'
 
 
 S_surf=np.zeros((N,2000))
@@ -80,9 +80,19 @@ ax.set_ylabel('site')
 ax.set_xlabel('t * $\overline{J}$')
 plt.title("$Re <S_z> $")
 #fig.colorbar(surf, shrink=0.5, aspect=5)
-t_edge=np.insert(t_total,0,0)
+if save:
+    plt.savefig(savename +"/surf.png")
+
+t_edge=np.insert(t_total,0,-10)
 n_edge=[n for n in range(N+1)]
 X,Y=np.meshgrid(t_edge,n_edge)
+
 fig2=plt.figure()
-p=plt.pcolor(X,Y,S_surf,vmin=-0.5, vmax=0.25)
+p=plt.pcolor(X,Y,S_surf,vmin=-0.5, vmax=0.5)
 fig2.colorbar(p)
+plt.ylabel('site')
+plt.xlabel('t * $\overline{J}$')
+plt.title("$Re <S_z> $")
+
+if save:
+    plt.savefig(savename +"/pcolor.png")
