@@ -17,17 +17,19 @@ Ave = []
 N = 11
 W = 10.0
 t = 1.0
-G = 5.0
+G = 1.0
 # seed=1
 
-save = True
-path0 = 'results/boundary/'
+save = False
+path0 = 'results/center/'
 
+
+S_surf=np.zeros((N,2000))
 
 for i in range(N):
     Sz_total = []
     Sp_total = []
-    for seed in range(1, 21):
+    for seed in range(1, 40):
         name = 'N='+str(N)+' W=' + str(W)+' t='+str(t) + \
             ' g=' + str(G) + ' seed=' + str(seed)
         path = path0 + name + '/store.p'
@@ -48,6 +50,8 @@ for i in range(N):
 
     Sz_ave = (np.mean(Sz_total, 0))
     Sp_ave = (np.mean(Sp_total, 0))
+    S_surf[i,:]=Sz_ave
+    
     plt.figure()
     plt.plot(t_total*t, Sp_ave, label="$Re <S^+_{%d} $" % (i))    
     plt.plot(t_total*t, Sz_ave, label="$Re <S^z_{%d} $" % (i))
@@ -63,3 +67,22 @@ for i in range(N):
         savename =path0+ 'Ave '+'N='+str(N)+' W=' + str(W)+' t='+str(t) +' g=' + str(G)
         os.makedirs(savename, exist_ok=True)
         plt.savefig(savename +"/site {}.png".format(i))
+
+#%%
+n_total=[n for n in range(N)]
+X,Y=np.meshgrid(t_total,n_total)
+fig=plt.figure()
+ax = plt.axes(projection='3d')
+surf=ax.plot_surface(X,Y, S_surf, cmap='viridis', edgecolor='none')
+ax.view_init(elev=45, azim=-45)
+ax.set_zlim(-0.5,0.5)
+ax.set_ylabel('site')
+ax.set_xlabel('t * $\overline{J}$')
+plt.title("$Re <S_z> $")
+#fig.colorbar(surf, shrink=0.5, aspect=5)
+t_edge=np.insert(t_total,0,0)
+n_edge=[n for n in range(N+1)]
+X,Y=np.meshgrid(t_edge,n_edge)
+fig2=plt.figure()
+p=plt.pcolor(X,Y,S_surf,vmin=-0.5, vmax=0.25)
+fig2.colorbar(p)
