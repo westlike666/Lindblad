@@ -55,12 +55,12 @@ gamma=Gammacomputer(N).central_g(G)
 H=model.get_Hamiltonian2(eps, J, U)
 
 ##states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
-states,rho0=model.generate_coherent_density(alpha=0.2*np.pi)
+#states,rho0=model.generate_coherent_density(alpha=0.2*np.pi)
 #states,rho0=model.generate_random_ket()
 #rng=default_rng(seed=1)
 #up_sites=rng.choice(N, N//2, replace=False)
 up_sites=[i for i in range(0,N,2)]
-#states, rho0=model.generate_up(up_sites)
+states, rho0=model.generate_up(up_sites)
 
 #print(states)
 print(up_sites)
