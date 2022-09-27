@@ -29,8 +29,8 @@ if save:
     os.mkdir(path)
 
 L=2
-N=7
-W=10
+N=5
+W=0
 t=1
 u=0
 
@@ -54,8 +54,8 @@ gamma=Gammacomputer(N).central_g(G)
 
 H=model.get_Hamiltonian2(eps, J, U)
 
-states,rho0=model.generate_coherent_density(alpha=1*np.pi/0.9)
-#states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
+##states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
+states,rho0=model.generate_coherent_density(alpha=0.2*np.pi)
 #states,rho0=model.generate_random_ket()
 #rng=default_rng(seed=1)
 #up_sites=rng.choice(N, N//2, replace=False)
@@ -87,7 +87,7 @@ Diss='dissipation'
 # index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=100
+t_1=0.1
 t_span=(t_0,t_1)
 times1=np.linspace(t_0, t_1, 1000)
 
@@ -146,7 +146,7 @@ c_ops=[]
 # for i in range(N):
 #     c_ops.append(np.sqrt(gamma[i])*diss[i])
     
-t_2=500
+t_2=20
 t_span=(t_1, t_2)
 times2=np.linspace(t_1, t_2, 1000)
 
@@ -210,7 +210,7 @@ def plot_evolution(show_type='z', show_ind=0):
         plt.savefig(path+"/site {}.png".format(show_ind))    
 for show_ind in range(N):
 #    plot_evolution('+',show_ind)
-    plot_evolution('z', show_ind)
+    plot_evolution(show_type, show_ind)
      
     
 if save:

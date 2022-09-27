@@ -77,8 +77,12 @@ class ode_funs():
                 g2=-1/2*self.gamma[l]*Y[index['+'][l]]
                 
             elif self.Diss=='dissipation':
-                g1=-self.gamma[l]*Y[index['+'][l]]*Y[index['+'][l]].conjugate()
-                g2=self.gamma[l]*Y[index['+'][l]]*Y[index['z'][l]]
+                # g1=-self.gamma[l]*Y[index['+'][l]]*Y[index['+'][l]].conjugate()
+                # g2=self.gamma[l]*Y[index['+'][l]]*Y[index['z'][l]]
+                
+                g1=-self.gamma[l]*(Y[index['z'][l]]+0.5)
+                g2=-self.gamma[l]*Y[index['+'][l]]/2
+                
                 
             else:
                 print('Jump operator is not difined')
