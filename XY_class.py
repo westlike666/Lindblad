@@ -386,6 +386,32 @@ class XY():
          self.Halmitonian=H        
          return H  
 
+    def get_Hamiltonian_MPC(self, eps, J): # This will only count J_ij*S_i*S_j once
+         """
+         """
+         L=self.L
+         N=self.N
+         
+         H=Qobj()
+         Sz=self.generate_Sz()
+         Sp=self.generate_Sp()
+         Sm=self.generate_Sm()
+         
+         #np.random.seed(seed)
+         # eps=eps_comp
+         # J=J_comp
+         # U=U_comp
+         
+         self.eps=eps
+         self.J=J
+         #self.U=U
+         
+         for i in range(N):
+             H += eps[i]*Sz[i]    
+             for j in range(N):
+                 H = H + J[i,j]*(Sp[i]*Sm[j])
+         self.Halmitonian=H        
+         return H  
          
     def generate_gamma2(self, G_comp):   
         self.gamma=G_comp
