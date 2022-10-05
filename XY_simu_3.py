@@ -20,10 +20,10 @@ import random
 
 
 L=2
-N=5
+N=3
 
-W=1
-t=0.1
+W=0
+t=1
 u=0
 G=1
 
@@ -42,7 +42,7 @@ U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
 H=model.get_Hamiltonian2(eps, J, U)
 
 #rho0=model.generate_coherent_density()
-rho0=model.generate_random_density(seed=None)
+states,rho0=model.generate_random_density(seed=None)
 
 #print(rho0)
 Sz=model.Sz
