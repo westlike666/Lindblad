@@ -83,11 +83,11 @@ Diss='dissipation'
 t_0=0
 t_1=100
 t_span1=(t_0,t_1)
-times1=np.linspace(t_0, t_1, 1000)
+times1=np.linspace(t_0, t_1, 100)
 
 t_2=500
 t_span2=(t_1, t_2)
-times2=np.linspace(t_1, t_2, 1000)
+times2=np.linspace(t_1, t_2, 100)
 
 
 

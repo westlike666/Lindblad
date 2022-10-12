@@ -409,6 +409,7 @@ class XY():
          for i in range(N):
              H += eps[i]*Sz[i]    
              for j in range(N):
+                 if j==i:continue
                  H = H + J[i,j]*(Sp[i]*Sm[j])
          self.Halmitonian=H        
          return H  

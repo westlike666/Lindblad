@@ -29,15 +29,15 @@ if save:
     os.mkdir(path)
 
 L=2
-N=8
+N=7
 W=0
 t=1
 u=0
 
-G=1
+G=0
 
 seed=None
-show_type='z'
+show_type='+'
 #show_ind=random.randrange(N)
 show_ind=0
 
@@ -47,15 +47,15 @@ model=XY(L,N)
 eps=Energycomputer(N,seed).uniformrandom_e(W)
 J=Jcomputer(N, nn_only=False, scaled=True, seed=seed).constant_j(t)
 U=Ucomputer(N, nn_only=False, scaled=True, seed=seed).uniformrandom_u(u)
-gamma=Gammacomputer(N).central_g(G)
-#gamma=Gammacomputer(N).boundary_g(G)
+#gamma=Gammacomputer(N).central_g(G)
+gamma=Gammacomputer(N).boundary_g(G)
 #gamma=Gammacomputer(N).site_g(G,[0,6])
 #gamma=Gammacomputer(N).constant_g(G)
 
 H=model.get_Hamiltonian_MPC(eps, J)
 
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
-states,rho0=model.generate_coherent_density(alpha=np.pi/4) 
+states,rho0=model.generate_coherent_density(alpha=np.pi/2.1) 
 #states,rho0=model.generate_random_ket()
 #rng=default_rng(seed=1)
 #up_sites=rng.choice(N, N//2, replace=False)
@@ -80,11 +80,11 @@ Diss='dissipation'
 # index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=0.01
+t_1=100
 t_span1=(t_0,t_1)
 times1=np.linspace(t_0, t_1, 1000)
 
-t_2=5
+t_2=500
 t_span2=(t_1, t_2)
 times2=np.linspace(t_1, t_2, 1000)
 
@@ -141,7 +141,7 @@ y0=expect(e_ops, rho0)
    
 
 
-ode_class=ode_funs(N, eps, J, U, gamma=0*gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
+ode_class=ode_funs(N, eps, J, U, gamma=np.zeros(N), Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
 fun=ode_class.fun_1st
 
 index=ode_class.flat_index(single_ops=['z', '+', '-'], double_ops=[], index={}) 
@@ -183,7 +183,7 @@ ss=['+-', '++', '--', '+z', '-z', 'zz']
 e_ops=model.generate_single_ops(s)+model.generate_double_ops(ss)
 
 
-ode_class=ode_funs(N, eps, J, U, gamma=0*gamma, Diss=Diss) 
+ode_class=ode_funs(N, eps, J, U, gamma=np.zeros(N), Diss=Diss) 
 index=ode_class.flat_index(s, ss, index={})
 
 fun=ode_class.fun_2nd_new
@@ -224,7 +224,7 @@ def plot_evolution(show_type='z', show_ind=0):
     plt.plot(np.append(t1_semi,t2_semi), y_total_semi, label="1st order $Re <S^{}_{}>$".format(show_type, show_ind))
     plt.plot(np.append(t1_MPC,t2_MPC), y_total_MPC, label="2nd order $Re <S^{}_{}>$".format(show_type, show_ind))
     plt.ylabel("site {}".format(show_ind))
-    #plt.ylim(-0.6,0.6)
+#    plt.ylim(-0.6,0.6)
     plt.axhline(y=-0.5, color='grey', linestyle='--')
     plt.legend()
     # plt.subplot(212)

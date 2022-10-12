@@ -224,23 +224,23 @@ class ode_funs():
             D[index['-'][k]]=-1j*self.eps[k]*Y[index['-'][k]] # for Sm
             for i in range(self.N):
                 if i==k: continue
-                D[index['z'][k]] += 1j*self.J[i,k]*(Y[index['+-'][i,k]]-Y[index['+-'][k,i]])
+                # D[index['z'][k]] += 1j*self.J[i,k]*(Y[index['+-'][i,k]]-Y[index['+-'][k,i]])
                                          
-                D[index['+'][k]] += -2j*self.J[i,k]*Y[index['+z'][i,k]]
+                # D[index['+'][k]] += -2j*self.J[i,k]*Y[index['+z'][i,k]]
                 
-                D[index['-'][k]] += +2j*self.J[i,k]*Y[index['-z'][i,k]]
+                # D[index['-'][k]] += +2j*self.J[i,k]*Y[index['-z'][i,k]]
+                                
                 
-                # D[index['z'][k]] += 1j*self.J[i,k]*(Y[index['+'][i]]*Y[index['-'][k]]-Y[index['+'][k]]*Y[index['-'][i]])
-                # D[index['+'][k]] += -2j*self.J[i,k]*Y[index['+'][i]]*Y[index['z'][k]]   
-                # D[index['-'][k]] += +2j*self.J[i,k]*Y[index['-'][i]]*Y[index['z'][k]]                
+                D[index['z'][k]] += 1j*self.J[i,k]*(self.SS('+-',[i,k],Y,index)-self.SS('+-',[k,i],Y,index))
+                                         
+                D[index['+'][k]] += -2j*self.J[i,k]*self.SS('+z',[i,k],Y,index)
                 
+                D[index['-'][k]] += +2j*self.J[i,k]*self.SS('-z',[i,k],Y,index)              
                 
-                
+          
                 
             if self.Diss=='dephasing':
-                pass
-                # D[index['z'][k]] +=0                   
-                # D[index['+'][k]] +=-1/2*self.gamma[k]*Y[index['+'][k]]                  
+                pass             
                     
             elif self.Diss=='dissipation':
                 D[index['z'][k]] += -self.gamma[k]*(Y[index['z'][k]]+0.5)
@@ -252,7 +252,7 @@ class ode_funs():
 #            D[index['-'][k]] = D[index['+'][k]].conjugate()
             
             
-        for k in range(self.N): 
+#        for k in range(self.N): 
             for l in range(self.N):
                 if l==k: 
                     continue
@@ -379,8 +379,9 @@ class ode_funs():
         e.g. pmz='zz', lm=(0,0) and       
         return S_z[0]*S_z[0] 
         """
-#        return Y[index[pmz][lm]]
-        return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]
+        return Y[index[pmz][(lm[0], lm[1])]] # 2nd order
+    
+        # return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]  # 1st order
 
     
     def SSS(self, pmz, lm, Y, index):
@@ -393,12 +394,13 @@ class ode_funs():
          e.g. pmz='zzz', lm=(0,0,0) and       
         return S_zS_zS_z[0,0,0] 
         """
+                  
         return Y[index[(pmz[0]+pmz[1])][(lm[0], lm[1])]]*Y[index[pmz[2]][lm[2]]]\
                   +Y[index[(pmz[0]+pmz[2])][(lm[0], lm[2])]]*Y[index[pmz[1]][lm[1]]]\
                   +Y[index[(pmz[1]+pmz[2])][(lm[1], lm[2])]]*Y[index[pmz[0]][lm[0]]]\
-                  -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
-            
-        # return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]
+                  -2*Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]  #2nd order
+                 
+        # return Y[index[pmz[0]][lm[0]]]*Y[index[pmz[1]][lm[1]]]*Y[index[pmz[2]][lm[2]]]  # 1st order
     
     
     def SSS2(self, pmz, lm, Y, index):
