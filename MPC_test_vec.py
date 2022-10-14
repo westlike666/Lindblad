@@ -10,7 +10,7 @@ import numpy as np
 import os
 import utils
 from XY_class import*
-from MPC_ode_funs import ode_funs
+from ode_funs_vec import ode_funs
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 import time 
@@ -37,7 +37,7 @@ u=0
 G=1
 
 seed=None
-show_type='z'
+show_type='+'
 #show_ind=random.randrange(N)
 show_ind=0
 
@@ -55,7 +55,7 @@ gamma=Gammacomputer(N).boundary_g(G)
 H=model.get_Hamiltonian_MPC(eps, J)
 
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
-states,rho0=model.generate_coherent_density(alpha=np.pi/4) 
+states,rho0=model.generate_coherent_density(alpha=np.pi/2.1) 
 #states,rho0=model.generate_random_ket()
 #rng=default_rng(seed=1)
 #up_sites=rng.choice(N, N//2, replace=False)
@@ -142,7 +142,7 @@ y0=expect(e_ops, rho0)
 
 
 ode_class=ode_funs(N, eps, J, U, gamma=np.zeros(N), Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
-fun=ode_class.fun_1st
+fun=ode_class.fun_1st_vec
 
 index=ode_class.flat_index(single_ops=['z', '+', '-'], double_ops=[], index={}) 
 
@@ -157,7 +157,7 @@ y1_semi=result1_semi['y']
 #phase2
  
 ode_class=ode_funs(N, eps, J, U, gamma=gamma, Diss=Diss) # chose the jump opperator for 'dephasing' or 'dissipation'
-fun=ode_class.fun_1st
+fun=ode_class.fun_1st_vec
   
 
 with tqdm(total=100, unit="‰") as pbar:
@@ -186,21 +186,21 @@ e_ops=model.generate_single_ops(s)+model.generate_double_ops(ss)
 ode_class=ode_funs(N, eps, J, U, gamma=np.zeros(N), Diss=Diss) 
 index=ode_class.flat_index(s, ss, index={})
 
-fun=ode_class.fun_2nd_new
-y0_MPC=expect(e_ops, rho0)
+# fun=ode_class.fun_2nd_new
+# y0_MPC=expect(e_ops, rho0)
 
-result1_MPC=solve_ivp(fun, t_span=t_span1, t_eval=times1, y0=y0_MPC, args=[index]) # no progressing bar yet
-t1_MPC=result1_MPC['t']
-y1_MPC=result1_MPC['y']
+# result1_MPC=solve_ivp(fun, t_span=t_span1, t_eval=times1, y0=y0_MPC, args=[index]) # no progressing bar yet
+# t1_MPC=result1_MPC['t']
+# y1_MPC=result1_MPC['y']
 
-#phase2
+# #phase2
 
-ode_class=ode_funs(N, eps, J, U, gamma=gamma, Diss=Diss)
-fun=ode_class.fun_2nd_new
+# ode_class=ode_funs(N, eps, J, U, gamma=gamma, Diss=Diss)
+# fun=ode_class.fun_2nd_new
 
-result2_MPC=solve_ivp(fun, t_span=t_span2, t_eval=times2,  y0=y1_MPC[:,-1], args=[index]) # no progressing bar yet
-t2_MPC=result2_MPC['t']
-y2_MPC=result2_MPC['y']
+# result2_MPC=solve_ivp(fun, t_span=t_span2, t_eval=times2,  y0=y1_MPC[:,-1], args=[index]) # no progressing bar yet
+# t2_MPC=result2_MPC['t']
+# y2_MPC=result2_MPC['y']
 
 #%%
 
@@ -214,15 +214,15 @@ plotting
 def plot_evolution(show_type='z', show_ind=0):
 
     t_total=np.append(result1_exact.times, result2_exact.times)
-    y_total=np.append(y1_exact[index[show_type][show_ind]].real,y2_exact[index[show_type][show_ind]].real)   
-    y_total_semi=np.append(y1_semi[index[show_type][show_ind]].real,y2_semi[index[show_type][show_ind]].real)
-    y_total_MPC=np.append(y1_MPC[index[show_type][show_ind]],y2_MPC[index[show_type][show_ind]])
+    y_total=np.append(y1_exact[index[show_type][show_ind][0]].real,y2_exact[index[show_type][show_ind][0]].real)   
+    y_total_semi=np.append(y1_semi[index[show_type][show_ind][0]].real,y2_semi[index[show_type][show_ind][0]].real)
+#    y_total_MPC=np.append(y1_MPC[index[show_type][show_ind][0]],y2_MPC[index[show_type][show_ind][0]])
     
     plt.figure(show_ind)
     #plt.subplot(211)
     plt.plot(t_total, y_total, label="Qutip exact $Re <S^{}_{}>$".format(show_type, show_ind))
     plt.plot(np.append(t1_semi,t2_semi), y_total_semi, label="1st order $Re <S^{}_{}>$".format(show_type, show_ind))
-    plt.plot(np.append(t1_MPC,t2_MPC), y_total_MPC, label="2nd order $Re <S^{}_{}>$".format(show_type, show_ind))
+  #  plt.plot(np.append(t1_MPC,t2_MPC), y_total_MPC, label="2nd order $Re <S^{}_{}>$".format(show_type, show_ind))
     plt.ylabel("site {}".format(show_ind))
 #    plt.ylim(-0.6,0.6)
     plt.axhline(y=-0.5, color='grey', linestyle='--')
