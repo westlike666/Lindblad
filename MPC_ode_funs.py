@@ -81,7 +81,9 @@ class ode_funs():
     
 
 
-    def fun_2nd_all(self, t, Y, index):
+# =============================================================================
+#     def fun_2nd_all(self, t, Y, index):
+# =============================================================================
         """
          by 2nd order approximation:
              <abc>=<ab><c>+<ac><b>+<bc><a>-2<a><b><c>  
@@ -196,6 +198,12 @@ class ode_funs():
                 D[index['--'][l,k]]=np.conjugate(D[index['++'][k,l]])
                 # D[index['z-'][l,k]]=np.conjugate(D[index['+z'][k,l]])
                 # D[index['z+'][l,k]]=np.conjugate(D[index['-z'][k,l]])
+                
+                for key in index:
+                    if len(key)>1:
+                        D[np.diag(index[key])]=0           
+              
+                return D
 
                           
         return D    
@@ -312,7 +320,9 @@ class ode_funs():
                 D[index['zz'][k,l]] += -(self.gamma[k]+self.gamma[l])*Y[index['zz'][k,l]]\
                                        -0.5*self.gamma[k]*Y[index['z'][l]]-0.5*self.gamma[l]*Y[index['z'][k]]
 
-                                              
+               
+
+                                      
         # for k in range(self.N): 
         #     for l in range(self.N):
         #         if l==k: 
@@ -321,6 +331,13 @@ class ode_funs():
         #D[index['--']]=np.transpose(np.conjugate(D[index['++']]))
                 # D[index['z-'][l,k]]=np.conjugate(D[index['+z'][k,l]])
                 # D[index['z+'][l,k]]=np.conjugate(D[index['-z'][k,l]])
+                
+        for key in index:
+            if len(key)>1:
+                D[np.diag(index[key])]=0           
+      
+        return D
+                
                          
         return D                 
             

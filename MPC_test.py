@@ -36,7 +36,7 @@ u=0
 
 G=1
 
-seed=None
+seed=1
 show_type='z'
 #show_ind=random.randrange(N)
 show_ind=0
@@ -55,12 +55,12 @@ gamma=Gammacomputer(N).boundary_g(G)
 H=model.get_Hamiltonian_MPC(eps, J)
 
 #states,rho0=model.generate_random_density(seed=None, pure=True) #seed works for mixed state
-states,rho0=model.generate_coherent_density(alpha=np.pi/4) 
+#states,rho0=model.generate_coherent_density(alpha=np.pi/4) 
 #states,rho0=model.generate_random_ket()
 #rng=default_rng(seed=1)
 #up_sites=rng.choice(N, N//2, replace=False)
 up_sites=[i for i in range(0,N,2)]
-#states, rho0=model.generate_up(up_sites)
+states, rho0=model.generate_up(up_sites)
 
 #print(states)
 print(up_sites)
@@ -80,11 +80,11 @@ Diss='dissipation'
 # index=ode_funs.flat_index(single_ops=['z','+'], double_ops=[], index={}) 
 
 t_0=0
-t_1=10
+t_1=100
 t_span1=(t_0,t_1)
 times1=np.linspace(t_0, t_1, 1000)
 
-t_2=100
+t_2=200
 t_span2=(t_1, t_2)
 times2=np.linspace(t_1, t_2, 1000)
 
@@ -189,7 +189,14 @@ index=ode_class.flat_index(s, ss, index={})
 fun=ode_class.fun_2nd_new
 y0_MPC=expect(e_ops, rho0)
 
-result1_MPC=solve_ivp(fun, t_span=t_span1, t_eval=times1, y0=y0_MPC, args=[index]) # no progressing bar yet
+
+for key in index:
+    if len(key)>1:
+        y0_MPC[np.diag(index[key])]=0  
+
+
+
+result1_MPC=solve_ivp(fun, t_span=t_span1, t_eval=times1, method='BDF', y0=y0_MPC, args=[index]) # no progressing bar yet
 t1_MPC=result1_MPC['t']
 y1_MPC=result1_MPC['y']
 
@@ -198,7 +205,7 @@ y1_MPC=result1_MPC['y']
 ode_class=ode_funs(N, eps, J, U, gamma=gamma, Diss=Diss)
 fun=ode_class.fun_2nd_new
 
-result2_MPC=solve_ivp(fun, t_span=t_span2, t_eval=times2,  y0=y1_MPC[:,-1], args=[index]) # no progressing bar yet
+result2_MPC=solve_ivp(fun, t_span=t_span2, t_eval=times2, method='BDF', y0=y1_MPC[:,-1], args=[index]) # no progressing bar yet
 t2_MPC=result2_MPC['t']
 y2_MPC=result2_MPC['y']
 

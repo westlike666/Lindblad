@@ -47,6 +47,18 @@ class XY():
         
         self.random_rho=rho
         return state_list,self.random_rho
+
+    def generate_whole_random_density(self,pure=False,seed=None):   
+        
+        L=self.L # number of levels 
+        N=self.N # number of sites 
+        
+        d=[L for i in range(N)]
+        rho=rand_dm(L**N,pure=pure,seed=seed,dims=[d,d])
+        
+        self.random_rho=rho
+        return rho
+
     
     def generate_random_ket(self,seed=None):   
         
@@ -78,6 +90,22 @@ class XY():
             state_list[i]=fock_dm(L,0)
         rho=tensor(state_list)        
         return state_list, rho
+
+
+    def generate_pseudo_up(self, up_sites, portion=0.001):
+        L=self.L
+        N=self.N
+        
+        state_list=[]
+        
+        for i in range(N):
+            state=coherent(L, (1-portion)*np.pi/2) # pesudo down state
+            state_list.append(state)
+        for i in up_sites:    
+            state_list[i]=coherent(L, portion*np.pi/2) # pesudo up state
+        rho=tensor(state_list)        
+        return state_list, rho
+
     
     def generate_coherent_density(self, alpha=np.pi/4, pure=True):   
         
